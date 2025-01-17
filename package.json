@@ -1,0 +1,25 @@
+{
+  "name": "docviz",
+  "version": "1.0.0",
+  "description": "Docker visualizer/observability tool",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+  "dev": "nodemon server/server.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/DocViz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oslabs-beta/DocViz/issues"
+  },
+  "homepage": "https://github.com/oslabs-beta/DocViz#readme"
+}

@@ -1,5 +1,5 @@
 {
-    "name": "docker-stats-app",
+    "name": "doc-viz",
     "version": "1.0.0",
     "description": "A tool for monitoring Docker container stats",
     "main": "server/server.js",
