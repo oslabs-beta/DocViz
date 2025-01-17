@@ -4,25 +4,26 @@
     "description": "A tool for monitoring Docker container stats",
     "main": "server/server.js",
     "scripts": {
-      "start": "node server/server.js",
-      "dev": "nodemon server/server.js"
+        "start": "node server/server.js",
+        "dev": "nodemon server/server.js"
     },
     "keywords": [
-      "docker",
-      "stats",
-      "observability",
-      "express"
+        "docker",
+        "stats",
+        "observability",
+        "express"
     ],
     "author": "",
     "license": "ISC",
     "dependencies": {
-      "axios": "^1.7.9",
-      "cors": "^2.8.5",
-      "dockerode": "^4.0.3",
-      "express": "^4.21.2"
+        "axios": "^1.7.9",
+        "body-parser": "^1.20.3",
+        "cors": "^2.8.5",
+        "dockerode": "^4.0.3",
+        "express": "^4.21.2",
+        "socket.io": "^4.8.1"
     },
     "devDependencies": {
-      "nodemon": "^2.0.22"
+        "nodemon": "^2.0.22"
     }
-  }
-  
+}
