@@ -9,7 +9,7 @@ const DockerStats = () => {
   const fetchContainers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/containers"); // Replace with your API endpoint
+      const response = await fetch("http://localhost:5003/api/containers"); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

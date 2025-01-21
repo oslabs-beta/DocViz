@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const containerRoutes = require('./routes/containers');
 const indexRoutes = require('./routes/index');
 const requestLogger = require('./middlewares/requestLogger');
@@ -11,6 +12,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 // logging req method and url
+app.use(cors());
 app.use(requestLogger);
 // Serves an entire directory of static files
 app.use(express.static(path.join(__dirname, '../public')));
