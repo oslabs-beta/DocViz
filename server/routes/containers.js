@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
                         status: container.Status,
                         cpuUsage: calculateCPUUsage(stats),
                         memoryUsage: `${(stats.memory_stats.usage / (1024 * 1024)).toFixed(2)} MB`,
+                        totalMemory: `${(stats.memory_stats.limit / (1024 * 1024)).toFixed(2)} MB`,
                         networkIO: calculateNetworkIO(stats),
                     });
                 });
