@@ -3,10 +3,11 @@
     "version": "1.0.0",
     "description": "A tool for monitoring Docker container stats",
     "main": "server/server.js",
-    "scripts": {
-        "start": "node server/server.js",
-        "dev": "nodemon server/server.js"
-    },
+  "scripts": {
+    "start:backend": "node server/server.js", 
+    "start:frontend": "cd client && npm run dev", 
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"" 
+},
     "keywords": [
         "docker",
         "stats",
@@ -24,6 +25,7 @@
         "socket.io": "^4.8.1"
     },
     "devDependencies": {
+        "concurrently": "^9.1.2",
         "nodemon": "^2.0.22"
     }
 }
