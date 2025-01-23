@@ -1,8 +1,26 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
+import Settings from './pages/Settings';
+import Sidebar from './components/layout/Sidebar';
 
 const App = () => {
-  return <Dashboard />;
+  return (
+    <Router>
+      <div style={{ display: 'flex' }}>
+        {/* Sidebar is persistent across pages */}
+        <Sidebar />
+        <div style={{ flex: 1, padding: '20px' }}>
+          <Routes>
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/settings' element={<Settings />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
 };
 
 export default App;

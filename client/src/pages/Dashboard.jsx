@@ -1,13 +1,24 @@
-import React from 'react';
-import Navbar from '../components/layout/Navbar';
-import DockerStats from '../components/DockerStats';
+import React, { useState } from 'react';
+import Sidebar from '../components/layout/Sidebar';
+import ChartContainer from '../components/tables/ContainerTable';
+import '../styles/dashboard.css';
 
-const Dashboard = () => {
+const Dashboard = ({ containerData }) => {
+  const [currentSection, setCurrentSection] = useState('cpu');
+
+  const stats = {
+    total: containerData.length,
+    running: containerData.filter((container) => container.status === 'running')
+      .length,
+    stopped: containerData.filter((container) => container.status !== 'running')
+      .length,
+  };
+
   return (
-    <>
-      <Navbar />
-      <DockerStats />
-    </>
+    <div className='dashboard'>
+      <Sidebar stats={stats} onSectionChange={setCurrentSection} />
+      <ChartContainer section={currentSection} data={containerData} />
+    </div>
   );
 };
 

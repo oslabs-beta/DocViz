@@ -1,0 +1,12 @@
+.dashboard {
+  display: flex;
+}
+
+.dashboard .sidebar {
+  flex: 0 0 250px;
+}
+
+.dashboard .charts {
+  flex: 1;
+  padding: 20px;
+}
