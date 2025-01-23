@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Settings = () => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(
+    localStorage.getItem('theme') || 'light' // Get theme from localStorage
+  );
   const [apiUrl, setApiUrl] = useState('http://localhost:5003/api/containers');
 
+  useEffect(() => {
+    // Apply theme to the body element
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
+
   const handleSave = () => {
-    // Save settings logic (e.g., localStorage or backend API call)
+    // Save theme to localStorage
+    localStorage.setItem('theme', theme);
+
+    // Optionally save API URL or other settings to localStorage or backend
     console.log('Settings saved:', { theme, apiUrl });
   };
 

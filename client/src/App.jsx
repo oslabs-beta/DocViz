@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
+import NetworkIOPage from './pages/NetworkIOPage';
+import CPUUsagePage from './pages/CPUUsagePage';
+import MemoryUsagePage from './pages/MemoryUsagePage';
 import Settings from './pages/Settings';
 import Sidebar from './components/layout/Sidebar';
 
@@ -15,6 +18,9 @@ const App = () => {
           <Routes>
             <Route path='/' element={<LandingPage />} />
             <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/network-io' element={<NetworkIOPage />} />
+            <Route path='/cpu-usage' element={<CPUUsagePage />} />
+            <Route path='/memory-usage' element={<MemoryUsagePage />} />
             <Route path='/settings' element={<Settings />} />
           </Routes>
         </div>

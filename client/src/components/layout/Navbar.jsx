@@ -1,9 +1,21 @@
 import React from 'react';
+import { useTheme } from '../context/themeContext';
 
 const Navbar = () => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <nav style={{ padding: '10px', backgroundColor: '#333', color: '#fff' }}>
-      <h2>DocViz</h2>
+    <nav
+      className={`navbar ${
+        theme === 'dark' ? 'navbar-dark bg-dark' : 'navbar-light bg-light'
+      }`}
+    >
+      <span className='navbar-brand'>Dashboard</span>
+      <div>
+        <button className='btn btn-secondary' onClick={toggleTheme}>
+          Toggle Theme
+        </button>
+      </div>
     </nav>
   );
 };

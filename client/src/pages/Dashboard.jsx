@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
-import Sidebar from '../components/layout/Sidebar';
-import ChartContainer from '../components/tables/ContainerTable';
+import { useLocation } from 'react-router-dom';
+import ContainerTable from '../components/tables/ContainerTable';
+import CPUUsageChart from '../components/charts/CPUUsageChart';
+import MemoryUsageChart from '../components/charts/MemoryUsageChart';
+import NetworkIOChart from '../components/charts/NetworkIOChart';
 import '../styles/dashboard.css';
 
-const Dashboard = ({ containerData }) => {
-  const [currentSection, setCurrentSection] = useState('cpu');
+const Dashboard = () => {
+  const location = useLocation();
+  const containerData = location.state?.containerData || []; // Fallback data
 
-  const stats = {
-    total: containerData.length,
-    running: containerData.filter((container) => container.status === 'running')
-      .length,
-    stopped: containerData.filter((container) => container.status !== 'running')
-      .length,
-  };
+  console.log('containerData:', containerData); // Log data for debugging
+
+  const [currentSection, setCurrentSection] = useState('cpu');
 
   return (
     <div className='dashboard'>
-      <Sidebar stats={stats} onSectionChange={setCurrentSection} />
-      <ChartContainer section={currentSection} data={containerData} />
+      <h1>Dashboard Overview</h1>
+      <br />
+      <ContainerTable data={containerData} />
+      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
+        <CPUUsageChart />
+        <MemoryUsageChart containers={containerData} />
+        <NetworkIOChart containers={containerData} />
+      </div>
     </div>
   );
 };

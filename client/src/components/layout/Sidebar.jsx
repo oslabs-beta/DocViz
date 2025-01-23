@@ -19,6 +19,15 @@ const Sidebar = () => {
         <li style={{ marginBottom: '10px' }}>
           <Link to='/dashboard'>Dashboard</Link>
         </li>
+        <li style={{ marginBottom: '10px' }}>
+          <Link to='/network-io'>Network I/O</Link>
+        </li>
+        <li style={{ marginBottom: '10px' }}>
+          <Link to='/cpu-usage'>CPU Usage</Link>
+        </li>
+        <li style={{ marginBottom: '10px' }}>
+          <Link to='/memory-usage'>Memory Usage</Link>
+        </li>
         <li>
           <Link to='/settings'>Settings</Link>
         </li>

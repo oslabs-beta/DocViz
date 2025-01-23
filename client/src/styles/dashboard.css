@@ -1,12 +1,28 @@
 .dashboard {
   display: flex;
+  flex-direction: column; /* Stack content vertically */
+  padding: 20px;
 }
 
-.dashboard .sidebar {
-  flex: 0 0 250px;
+.dashboard h1 {
+  text-align: center; /* Center the heading */
+  margin-bottom: 20px; /* Add spacing below the heading */
 }
 
 .dashboard .charts {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between; /* Distribute charts evenly */
+  flex-wrap: wrap; /* Wrap charts to the next row if needed */
+}
+
+.dashboard .charts > div {
   flex: 1;
-  padding: 20px;
+  min-width: 300px; /* Ensure charts are responsive and fit smaller screens */
+  max-width: 33%; /* Limit each chart's size to 1/3 of the parent width */
+  height: 300px; /* Keep consistent height for all charts */
+}
+
+.dashboard .container-table {
+  margin-bottom: 20px; /* Add spacing below the table */
 }

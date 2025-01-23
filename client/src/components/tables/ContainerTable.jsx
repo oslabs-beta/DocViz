@@ -1,20 +1,22 @@
 import React from 'react';
 
-const ContainerTable = ({ containers }) => {
+const ContainerTable = ({ data }) => {
+  if (!data || data.length === 0) {
+    return <p></p>;
+  }
+
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <table>
       <thead>
         <tr>
           <th>Container ID</th>
-          <th>Image</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        {containers.map((container) => (
+        {data.map((container) => (
           <tr key={container.id}>
-            <td>{container.id.substring(0, 12)}</td>
-            <td>{container.image}</td>
+            <td>{container.id}</td>
             <td>{container.status}</td>
           </tr>
         ))}
