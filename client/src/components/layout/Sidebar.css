@@ -1,0 +1,58 @@
+/* 
+/* Sidebar.css */
+
+/* Sidebar container */
+ .side-nav {
+  height: 100vh; /* Full height of the viewport */
+  background-color: #411aad !important; /* Dark background color */
+  color: rgb(87, 44, 44);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10%;
+  padding: 20px; /* Add padding to all sides */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align items at the top */
+  align-items: flex-start; /* Align the sidebar content to the left */
+} 
+
+/* Sidebar header */
+ .side-nav-header {
+  font-size: 24px; /* Smaller font size */
+  font-weight: bold;
+  text-shadow: 
+  2px 2px 0 #bde108,  /* Bottom-right */
+  -2px 2px 0 #bde108, /* Bottom-left */
+  2px -2px 0 #bde108, /* Top-right */
+  -2px -2px 0 #bde108; /* Top-left */
+  color: rgb(0, 0, 0);
+  margin-bottom: 30px; /* Space between the title and the links */
+  text-align: center;
+  width: 100%; /* Ensure it takes full width */
+  padding-bottom: 20px; /* Add some space below the title */
+  border-bottom: 2px solid #495057; /* Optional: A border to separate title from links */
+} 
+
+/* Navigation links */
+
+.nav-item {
+    color: #603d3d;                  /* Text color */
+    text-align: center;           /* Center text */
+    font-size: 16px;              /* Font size */
+    padding: 15px 20px;           /* Padding for clickable area */
+    text-decoration: none;        /* Remove underline */
+    width: 100%;    /* Full-width button */
+    margin: 10px auto;                
+    display: block;               /* Block-level element */
+    background-color: #000000;       /* White background */
+    border: 1px solid #33ba14;                 /* No default border */
+    cursor: pointer;              /* Pointer cursor on hover */
+    transition: all 0.3s ease;    /* Smooth hover effect */
+  }
+
+Hover effect for links
+.nav-item:hover {
+  background-color: #0e5091;
+  color: white;
+} 

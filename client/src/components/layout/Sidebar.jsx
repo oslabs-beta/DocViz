@@ -1,23 +1,25 @@
 import React from 'react';
-import '../../styles/Sidebar';
+import { Nav, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import './Sidebar.css';
 
-const Sidebar = ({ stats, onSectionChange }) => {
-  return (
-    <div className='sidebar'>
-      <h2>Dashboard</h2>
-      <ul className='sidebar-links'>
-        <li onClick={() => onSectionChange('cpu')}>CPU Usage</li>
-        <li onClick={() => onSectionChange('memory')}>Memory Usage</li>
-        <li onClick={() => onSectionChange('network')}>Network I/O</li>
-      </ul>
-      <div className='sidebar-stats'>
-        <h3>Container Stats</h3>
-        <p>Total Containers: {stats.total}</p>
-        <p>Running: {stats.running}</p>
-        <p>Stopped: {stats.stopped}</p>
-      </div>
-    </div>
-  );
+const Sidebar = () => {
+    return (
+            <Col md={3} className="side-nav">
+      <div className="side-nav-header">DocViz</div>
+      <Nav className="flex-column">
+        <Nav.Link as={Link} to="/dashboard" className="nav-item">
+          Dashboard
+        </Nav.Link>
+        <Nav.Link as={Link} to="/profile" className="nav-item">
+          About Us
+        </Nav.Link>
+        <Nav.Link as={Link} to="/settings" className="nav-item">
+          Settings
+        </Nav.Link>
+      </Nav>
+    </Col>
+    );
 };
 
 export default Sidebar;

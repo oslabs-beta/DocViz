@@ -1,0 +1,26 @@
+/* .header {
+    background-color: #661b1b; /* Dark background for the header 
+     color: white;
+    padding: 1rem; /* Add padding for spacing 
+    /* text-align: center; /* Center the content 
+    font-size: 1.5rem;
+    font-weight: bold;
+    z-index: 1000;  Make sure it appears above other elements 
+    width: 100%;  Full width of the page 
+    position: sticky;  Keeps it at the top when scrolling 
+    top: 0; /* Stick to the very top 
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility
+  } 
+ */
+ .header {
+    background-color: #343a40; /* Bootstrap "dark" background color */
+    padding: 1.5rem 0; /* Consistent spacing */
+  }
+  
+  .brand-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d5c110c1; /* Text color */
+    text-align: center;
+  }
+  

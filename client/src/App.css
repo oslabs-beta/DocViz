@@ -1,0 +1,89 @@
+/* Set global dark background and text color */
+body {
+  background-color: rgb(4, 0, 0);
+  color: white; /* White text for contrast */
+  font-family: 'Arial', sans-serif; /* Optional: Set a default font */
+  margin: 0;
+  padding: 0;
+}
+
+/* Style for links */
+a {
+  color: #1e90ff; /* Vivid blue links */
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ff6347; /* Tomato color on hover */
+  text-decoration: underline;
+}
+
+/* Header styles */
+.header {
+  background-color: #333; /* Dark header */
+  padding: 20px;
+  text-align: center;
+}
+
+.header h1 {
+  color: #f4fff0; /* Light blue text */
+}
+
+nav ul li {
+  margin: 0 15px;
+}
+
+nav ul li a {
+  color: #f0f8ff; /* Light blue for nav links */
+  font-size: 18px;
+}
+
+nav ul li a:hover {
+  color: #ff6347; /* Tomato color on hover */
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background-color: #222; /* Dark sidebar */
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar a {
+  color: #fff;
+  display: block;
+  margin: 15px 0;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #ffe347;
+  text-decoration: underline;
+}
+
+/* Content area style */
+.layout-content {
+  margin-left: 270px; /* Push content to the right to make space for the sidebar */
+  padding: 20px;
+}
+
+/* Example button styles */
+button {
+  background-color: #344f7b; /* Vivid button color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #ff4500; /* Darker red on hover */
+}
