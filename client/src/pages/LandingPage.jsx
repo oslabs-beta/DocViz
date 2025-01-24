@@ -10,6 +10,10 @@ const LandingPage = ({ containers }) => {
     navigate(`/dashboard/${id}`);
   };
 
+  if (!containers || containers.length === 0) {
+    return <p>No containers available to display.</p>;
+  }
+
   return (
     <div className='landing-page'>
       <h1>Welcome to Your Docker Monitor</h1>

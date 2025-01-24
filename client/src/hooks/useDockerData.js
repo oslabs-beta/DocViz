@@ -1,26 +1,33 @@
 import { useState, useEffect } from 'react';
 
-const useDockerData = (apiEndpoint) => {
-  const [data, setData] = useState([]);
+const useDockerData = () => {
+  const [containers, setContainers] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:5003/api/containers'); // Backend API endpoint
+      const data = await response.json();
+
+      console.log('API Response:', data); // Log the response for debugging
+
+      if (!Array.isArray(data)) {
+        throw new Error('Expected an array of containers');
+      }
+
+      // Set containers directly since the backend sends an array
+      setContainers(data);
+    } catch (error) {
+      console.error('Error fetching Docker data:', error);
+      setError(error.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiEndpoint);
-        const result = await response.json();
-        setData(result.containers); // Assumes API returns `containers` array.
-      } catch (error) {
-        console.error('Error fetching Docker data:', error);
-      }
-    };
-
     fetchData();
-    const interval = setInterval(fetchData, 1000); // Poll every second.
+  }, []);
 
-    return () => clearInterval(interval); // Cleanup interval on unmount.
-  }, [apiEndpoint]);
-
-  return data;
+  return { containers, error };
 };
 
 export default useDockerData;

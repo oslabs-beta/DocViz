@@ -15,14 +15,16 @@ const Dashboard = ({ container }) => {
     <div className='dashboard'>
       <Sidebar />
       <main className='dashboard-content'>
-        <h1>Dashboard for {container.name}</h1>
-        <p>
-          <strong>Image:</strong> {container.image}
-        </p>
+        <h1>Dashboard for {container.image}</h1>
         <p>
           <strong>Status:</strong> {container.status}
         </p>
-
+        <p>
+          <strong>Memory Usage:</strong> {container.memoryUsage}
+        </p>
+        <p>
+          <strong>CPU Usage:</strong> {container.cpuUsage}
+        </p>
         <div className='chart-section'>
           <CPUUsageChart data={container.cpuUsage} />
           <MemoryUsageChart data={container.memoryUsage} />

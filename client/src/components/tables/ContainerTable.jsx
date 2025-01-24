@@ -19,8 +19,8 @@ function ContainerTable({ data = [] }) {
             <td>{container.id}</td>
             <td>{container.image}</td>
             <td>{container.status}</td>
-            <td>{container.cpu}</td>
-            <td>{container.memory}</td>
+            <td>{container.cpuUsage}</td>
+            <td>{container.memoryUsage}</td>
           </tr>
         ))}
       </tbody>

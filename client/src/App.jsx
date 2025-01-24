@@ -1,17 +1,27 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import useDockerData from './hooks/useDockerData';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
-import useDockerData from './hooks/useDockerData';
 
 const App = () => {
-  const containerData = useDockerData('http://localhost:4000/api/containers'); // Replace with your actual API endpoint.
+  const { containers, error, loading } = useDockerData();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<LandingPage containers={containerData} />} />
-        <Route path='/dashboard/:id' element={<Dashboard />} />
+        <Route path='/' element={<LandingPage containers={containers} />} />
+        <Route
+          path='/dashboard/:id'
+          element={
+            <Dashboard
+              container={(params) => containers.find((c) => c.id === params.id)}
+            />
+          }
+        />
       </Routes>
     </Router>
   );
