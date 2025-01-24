@@ -1,28 +1,31 @@
 import React from 'react';
+import '../../styles/tables.css';
 
-const ContainerTable = ({ data }) => {
-  if (!data || data.length === 0) {
-    return <p></p>;
-  }
-
+function ContainerTable({ data = [] }) {
   return (
     <table>
       <thead>
         <tr>
-          <th>Container ID</th>
+          <th>ID</th>
+          <th>Image</th>
           <th>Status</th>
+          <th>CPU (%)</th>
+          <th>Memory (%)</th>
         </tr>
       </thead>
       <tbody>
         {data.map((container) => (
           <tr key={container.id}>
             <td>{container.id}</td>
+            <td>{container.image}</td>
             <td>{container.status}</td>
+            <td>{container.cpu}</td>
+            <td>{container.memory}</td>
           </tr>
         ))}
       </tbody>
     </table>
   );
-};
+}
 
 export default ContainerTable;

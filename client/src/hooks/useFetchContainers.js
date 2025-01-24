@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 
-const useFetchContainers = () => {
-  const [containers, setContainers] = useState([]);
+const useFetchContainers = (url) => {
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchContainers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5003/api/containers');
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        setContainers(data);
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const result = await response.json();
+        setData(result);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -20,10 +21,10 @@ const useFetchContainers = () => {
       }
     };
 
-    fetchContainers();
-  }, []);
+    fetchData();
+  }, [url]);
 
-  return { containers, loading, error };
+  return { data, loading, error };
 };
 
 export default useFetchContainers;

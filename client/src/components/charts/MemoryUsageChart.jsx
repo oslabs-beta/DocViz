@@ -1,51 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import React from 'react';
+import { Line } from 'react-chartjs-2';
 
-const MemoryUsageChart = () => {
-  const [containers, setContainers] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/stats');
-        const data = await response.json();
-        setContainers(data);
-      } catch (error) {
-        console.error('Error fetching container stats:', error);
-      }
-    };
-
-    // Fetch data every 5 seconds
-    const intervalId = setInterval(fetchData, 5000);
-
-    // Fetch immediately and set up interval
-    fetchData();
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const data = {
-    labels: containers.map((container) => container.Name),
+const MemoryUsageChart = ({ data }) => {
+  const chartData = {
+    labels: data.timestamps,
     datasets: [
       {
         label: 'Memory Usage (MB)',
-        data: containers.map((container) =>
-          parseFloat(container.MemUsage.split('/')[0])
-        ), // Parse memory usage
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        data: data.memoryUsage,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
+        borderWidth: 2,
+        tension: 0.4,
+        pointRadius: 3,
       },
     ],
   };
 
-  return (
-    <div style={{ flex: 1 }}>
-      <h2>Memory Usage</h2>
-      <Bar data={data} />
-    </div>
-  );
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+    },
+    scales: {
+      x: { title: { display: true, text: 'Time' } },
+      y: { title: { display: true, text: 'Memory (MB)' } },
+    },
+  };
+
+  return <Line data={chartData} options={options} />;
 };
 
 export default MemoryUsageChart;

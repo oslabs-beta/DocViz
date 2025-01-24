@@ -1,43 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import ContainerCard from '../components/cards/ContainerCard';
+import '../styles/landingPage.css';
 
-const LandingPage = () => {
-  const mockContainerData = [
-    {
-      id: 'container1',
-      status: 'running',
-      networkIO: 120,
-      cpuUsage: 30,
-      memoryUsage: 500,
-    },
-    {
-      id: 'container2',
-      status: 'stopped',
-      networkIO: 50,
-      cpuUsage: 10,
-      memoryUsage: 200,
-    },
-  ];
+const LandingPage = ({ containers }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = (id) => {
+    navigate(`/dashboard/${id}`);
+  };
 
   return (
-    <div>
-      <h1>Welcome to DocViz</h1>
-      <p>Start visualizing your Docker containers now!</p>
-      <Link
-        to={{
-          pathname: '/dashboard',
-          state: { containerData: mockContainerData },
-        }}
-        style={{
-          padding: '10px 20px',
-          background: '#007BFF',
-          color: 'white',
-          textDecoration: 'none',
-          borderRadius: '5px',
-        }}
-      >
-        Go to Dashboard
-      </Link>
+    <div className='landing-page'>
+      <h1>Welcome to Your Docker Monitor</h1>
+      <div className='container-cards'>
+        {containers.map((container) => (
+          <ContainerCard
+            key={container.id}
+            container={container}
+            onClick={() => handleCardClick(container.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 };

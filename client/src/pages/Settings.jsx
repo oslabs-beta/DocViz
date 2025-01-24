@@ -1,63 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../components/layout/Sidebar';
+import '../styles/settings.css';
 
 const Settings = () => {
-  const [theme, setTheme] = useState(
-    localStorage.getItem('theme') || 'light' // Get theme from localStorage
-  );
-  const [apiUrl, setApiUrl] = useState('http://localhost:5003/api/containers');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
-    // Apply theme to the body element
     document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const handleSave = () => {
-    // Save theme to localStorage
-    localStorage.setItem('theme', theme);
-
-    // Optionally save API URL or other settings to localStorage or backend
-    console.log('Settings saved:', { theme, apiUrl });
+  const handleThemeChange = (e) => {
+    const newTheme = e.target.value;
+    setTheme(newTheme);
+    document.body.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme); // Save to localStorage.
   };
 
   return (
-    <div>
-      <h1>Settings</h1>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          Theme:
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            style={{ marginLeft: '10px' }}
-          >
+    <div className='settings'>
+      <Sidebar />
+      <main className='settings-content'>
+        <h1>Settings</h1>
+        <div className='theme-selector'>
+          <label htmlFor='theme'>Theme:</label>
+          <select id='theme' value={theme} onChange={handleThemeChange}>
             <option value='light'>Light</option>
             <option value='dark'>Dark</option>
           </select>
-        </label>
-      </div>
-      <div style={{ marginBottom: '20px' }}>
-        <label>
-          API URL:
-          <input
-            type='text'
-            value={apiUrl}
-            onChange={(e) => setApiUrl(e.target.value)}
-            style={{ marginLeft: '10px', width: '300px' }}
-          />
-        </label>
-      </div>
-      <button
-        onClick={handleSave}
-        style={{
-          padding: '10px 20px',
-          background: '#28a745',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-        }}
-      >
-        Save Settings
-      </button>
+        </div>
+      </main>
     </div>
   );
 };

@@ -1,26 +1,39 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
-const NetworkIOChart = ({ containers }) => {
-  const data = {
-    labels: containers.map((container) => container.id.substring(0, 12)),
+const NetworkIOChart = ({ data }) => {
+  const chartData = {
+    labels: data.timestamps,
     datasets: [
       {
-        label: 'Network I/O (MB)',
-        data: containers.map((container) => container.networkIO),
-        fill: false,
-        borderColor: 'rgba(153, 102, 255, 1)',
-        tension: 0.4,
+        label: 'Network In (KB)',
+        data: data.networkIn,
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'Network Out (KB)',
+        data: data.networkOut,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
       },
     ],
   };
 
-  return (
-    <div style={{ flex: 1 }}>
-      <h2>Network I/O</h2>
-      <Line data={data} />
-    </div>
-  );
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+    },
+    scales: {
+      x: { title: { display: true, text: 'Time' } },
+      y: { title: { display: true, text: 'Data (KB)' } },
+    },
+  };
+
+  return <Bar data={chartData} options={options} />;
 };
 
 export default NetworkIOChart;

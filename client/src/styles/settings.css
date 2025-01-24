@@ -1,0 +1,17 @@
+.settings {
+  display: flex;
+  height: 100vh;
+}
+
+.settings-content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.theme-selector {
+  margin-top: 20px;
+}
+
+.theme-selector label {
+  margin-right: 10px;
+}
