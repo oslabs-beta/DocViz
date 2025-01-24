@@ -1,0 +1,60 @@
+/* Navbar */
+.nav-button:hover {
+  background-color: #443c7a !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px #1a173f47;
+}
+
+.nav-button:hover svg {
+  color: #ffffff !important;
+}
+
+/* Dashboard */
+.back-button:hover {
+  background-color: rgba(123, 89, 255, 0.1) !important;
+  border-color: rgba(123, 89, 255, 0.8) !important;
+  box-shadow: 0 0 15px rgba(123, 89, 255, 0.3);
+}
+
+.details-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.details-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  padding: 2px;
+  background: linear-gradient(to right, #7b59ff, #00ff9d);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row:hover {
+  background-color: rgba(123, 89, 255, 0.1);
+}
+
+.info-row strong {
+  color: rgba(255, 255, 255, 0.9);
+}
