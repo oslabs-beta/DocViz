@@ -1,13 +1,16 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Button, Alert } from 'react-bootstrap';
+import { Container, Button, Alert, Row, Col } from 'react-bootstrap';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import useFetchContainers from '../hooks/useFetchContainers';
 import '../styles/index.css';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ContainerDetails = () => {
   const { containerId } = useParams();
   const navigate = useNavigate();
-  // useFetchContainers is managing these 3 states
   const { containers, loading, error } = useFetchContainers();
 
   const container = containers.find((c) => c.id === containerId);
@@ -18,6 +21,28 @@ const ContainerDetails = () => {
     if (status?.includes('Exited')) return '#ff4757';
     return '#ffa502';
   };
+
+  const statusIndicatorStyle = (status) => ({
+    width: '15px',
+    height: '15px',
+    borderRadius: '50%',
+    backgroundColor: getStatusColor(status),
+    boxShadow: `0 0 5px ${getStatusColor(status)}`,
+  });
+
+  // Function to prepare Doughnut chart data
+  const prepareChartData = (label, value, maxValue, color) => ({
+    labels: [label, 'Remaining'],
+    datasets: [
+      {
+        label,
+        data: [value, maxValue - value],
+        backgroundColor: [color, '#ddd'],
+        hoverBackgroundColor: [color, '#aaa'],
+        borderWidth: 1,
+      },
+    ],
+  });
 
   return (
     <div
@@ -61,81 +86,115 @@ const ContainerDetails = () => {
 
         {container && (
           <>
-            <h1
-              style={{
-                color: '#fff',
-                marginBottom: '2rem',
-                textShadow: '0 0 10px rgba(255,255,255,0.3)',
-                fontSize: '2.5rem',
-                fontWeight: '300',
-              }}
-            >
-              Container: {container.image}
-            </h1>
-            <div
-              style={{
-                backgroundColor: 'rgba(41, 28, 64, 0.6)',
-                backdropFilter: 'blur(10px)',
-                padding: '2rem',
-                borderRadius: '8px',
-                marginBottom: '2rem',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 0 20px rgba(123, 89, 255, 0.1)',
-              }}
-              className='details-card'
-            >
-              <h3
-                style={{
-                  color: '#fff',
-                  marginBottom: '1.5rem',
-                  fontSize: '1.5rem',
-                  fontWeight: '400',
-                }}
-              >
-                Container Information
-              </h3>
-              <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                <div className='info-row'>
-                  <strong>ID:</strong>
-                  <span>{container.id}</span>
-                </div>
-                <div className='info-row'>
-                  <strong>Status:</strong>
-                  <div
+            {/* Container Details */}
+            <Row>
+              <Col md={6}>
+                <div
+                  style={{
+                    backgroundColor: 'rgba(41, 28, 64, 0.6)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '2rem',
+                    borderRadius: '8px',
+                    marginBottom: '2rem',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 0 20px rgba(123, 89, 255, 0.1)',
+                  }}
+                >
+                  <h3
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
+                      color: '#fff',
+                      marginBottom: '1.5rem',
+                      fontSize: '1.5rem',
+                      fontWeight: '400',
                     }}
                   >
-                    <div
-                      style={{
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        backgroundColor: getStatusColor(container.status),
-                        boxShadow: `0 0 10px ${getStatusColor(
-                          container.status
-                        )}`,
-                      }}
-                    />
-                    <span>{container.status}</span>
+                    Container Information
+                  </h3>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <div className='info-row'>
+                      <strong>ID:</strong>
+                      <span>{container.id}</span>
+                    </div>
+                    <div className='info-row'>
+                      <strong>Status:</strong>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <div style={statusIndicatorStyle(container.status)} />
+                        <span>{container.status}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className='info-row'>
-                  <strong>Memory Usage:</strong>
-                  <span>{container.memoryUsage}</span>
-                </div>
-                <div className='info-row'>
-                  <strong>CPU Usage:</strong>
-                  <span>{container.cpuUsage}</span>
-                </div>
-                <div className='info-row'>
-                  <strong>Network I/O:</strong>
-                  <span>{container.networkIO}</span>
-                </div>
-              </div>
-            </div>
+              </Col>
+
+              {/* Charts Section */}
+              <Col md={6}>
+                <Row>
+                  <Col md={4}>
+                    <h5 style={{ color: '#fff', marginBottom: '1rem' }}>
+                      Network I/O
+                    </h5>
+                    <Doughnut
+                      data={prepareChartData(
+                        'Network I/O (MB)',
+                        parseFloat(container.networkIO) || 0, // Example value
+                        1000, // Max value assumption
+                        '#ff6384'
+                      )}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: true,
+                      }}
+                      width={60}
+                      height={60} // Small chart size
+                    />
+                  </Col>
+                  <Col md={4}>
+                    <h5 style={{ color: '#fff', marginBottom: '1rem' }}>
+                      Memory Usage
+                    </h5>
+                    <Doughnut
+                      data={prepareChartData(
+                        'Memory Usage (MB)',
+                        parseFloat(container.memoryUsage) || 0, // Example value
+                        16000, // Max value assumption
+                        '#36a2eb'
+                      )}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: true,
+                      }}
+                      width={60}
+                      height={60} // Small chart size
+                    />
+                  </Col>
+                  <Col md={4}>
+                    <h5 style={{ color: '#fff', marginBottom: '1rem' }}>
+                      CPU Usage
+                    </h5>
+                    <Doughnut
+                      data={prepareChartData(
+                        'CPU Usage (%)',
+                        parseFloat(container.cpuUsage) || 0, // Example value
+                        100, // Max value assumption
+                        '#ffce56'
+                      )}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: true,
+                      }}
+                      width={60}
+                      height={60} // Small chart size
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
           </>
         )}
 
