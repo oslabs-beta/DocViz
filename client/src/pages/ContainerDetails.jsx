@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Button, Alert } from 'react-bootstrap';
 import useFetchContainers from '../hooks/useFetchContainers';
-import '../../styles/index.css';
+import '../styles/index.css';
 
 const ContainerDetails = () => {
   const { containerId } = useParams();
