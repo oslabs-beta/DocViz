@@ -21,3 +21,5 @@ const Sidebar = ({ stats, onSectionChange }) => {
 };
 
 export default Sidebar;
+
+// delete file

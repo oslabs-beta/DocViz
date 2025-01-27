@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useFetchContainers from '../hooks/useFetchContainers';
 import Navbar from '../components/layout/Navbar';
 import Alert from 'react-bootstrap/Alert'; // For Bootstrap
+import '../styles/index.css';
 
 const LandingPage = () => {
   const { containers, loading, error } = useFetchContainers();
@@ -23,7 +24,7 @@ const LandingPage = () => {
   return (
     <div
       style={{
-        background: '#231F4A',
+        background:'#1a1738',
         minHeight: '100vh',
       }}
       className='text-white'
@@ -47,11 +48,11 @@ const LandingPage = () => {
                   onClick={() => handleContainerClick(container.id)}
                   style={{
                     backgroundColor: '#352F6D',
-                    border: '1px solid #443c7a',
                     height: '300px',
                     maxWidth: '280px',
+                    borderRadius:'14px'
                   }}
-                  className='container-card mx-auto text-white rounded-3'
+                  className='container-card mx-auto text-white'
                 >
                   <Card.Body className='d-flex flex-column align-items-center justify-content-center p-4'>
                     <div className='text-center mb-3'>
@@ -104,42 +105,5 @@ const LandingPage = () => {
   );
 };
 
-const style = document.createElement('style');
-style.textContent = `
-  .container-card {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .container-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px #1a173f47;
-  }
-  
-  .container-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 12px;
-    padding: 1px;
-    background: linear-gradient(to right, #7b59ff, #00ff9d);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .container-card:hover::before {
-    opacity: 0.4;
-  }
-`;
-document.head.appendChild(style);
 
 export default LandingPage;

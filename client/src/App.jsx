@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/HomePage';
-import ContainerDetails from './pages/ContainerDetails';
+import Dashboard from './pages/Dashboard';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
@@ -9,7 +9,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path='/' element={<LandingPage />} />
-        <Route path='/container/:containerId' element={<ContainerDetails />} />
+        <Route path='/container/:containerId' element={<Dashboard />} />
       </Routes>
     </Router>
   );

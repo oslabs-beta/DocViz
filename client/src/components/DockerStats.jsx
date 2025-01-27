@@ -20,8 +20,6 @@ const DockerStats = ({ container }) => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Docker Dashboard</h1>
-
       {/* Container Info Card */}
       <Card
         style={{

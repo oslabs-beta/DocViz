@@ -14,9 +14,9 @@ const Navbar = () => {
         width: '60px',
         height: '100vh',
       }}
-      className='d-flex flex-column align-items-center py-4 position-fixed start-0 top-0'
+      className='d-flex flex-column align-items-center py-3 position-fixed start-0 top-0'
     >
-      <div className='mb-4 text-white fs-3'>D</div>
+      <div className='mb-3 text-white fs-3'>D</div>
       <button
         onClick={() => navigate('/')}
         className='nav-button d-flex align-items-center justify-content-center border-0 rounded-2 cursor-pointer'

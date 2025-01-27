@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+const apiEndpoint = 'http://localhost:5003/api/containers';
 const useDockerData = (apiEndpoint) => {
   const [containers, setContainers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ const useDockerData = (apiEndpoint) => {
     };
 
     fetchData(); // Initial fetch
-    const interval = setInterval(fetchData, 5000); // Poll every 5 seconds
+    const interval = setInterval(fetchData, 1000); // Poll every 5 seconds
 
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, [apiEndpoint, containers]);
