@@ -3,6 +3,7 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import useFetchContainers from '../hooks/useFetchContainers';
 import Navbar from '../components/layout/Navbar';
+import Alert from 'react-bootstrap/Alert'; // For Bootstrap
 
 const LandingPage = () => {
   const { containers, loading, error } = useFetchContainers();
