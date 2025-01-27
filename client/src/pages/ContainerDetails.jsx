@@ -1,48 +1,24 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Button, Alert, Row, Col } from 'react-bootstrap';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import useFetchContainers from '../hooks/useFetchContainers';
+import useFetchContainers from '../hooks/useFetchContainers'; // Import your hook
 import '../styles/index.css';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import CPUUsageChart from '../components/charts/CPUUsageChart';
+import MemoryUsageChart from '../components/charts/MemoryUsageChart';
+import NetworkIOChart from '../components/charts/NetworkIOChart';
+import DockerStats from '../components/DockerStats'; // Import DockerStats to use its card structure
 
 const ContainerDetails = () => {
   const { containerId } = useParams();
   const navigate = useNavigate();
+
+  // Use your custom hook to fetch container data
   const { containers, loading, error } = useFetchContainers();
 
-  const container = containers.find((c) => c.id === containerId);
-
-  // Function to get status color (orange by default)
-  const getStatusColor = (status) => {
-    if (status?.includes('Up')) return '#00ff9d';
-    if (status?.includes('Exited')) return '#ff4757';
-    return '#ffa502';
-  };
-
-  const statusIndicatorStyle = (status) => ({
-    width: '15px',
-    height: '15px',
-    borderRadius: '50%',
-    backgroundColor: getStatusColor(status),
-    boxShadow: `0 0 5px ${getStatusColor(status)}`,
-  });
-
-  // Function to prepare Doughnut chart data
-  const prepareChartData = (label, value, maxValue, color) => ({
-    labels: [label, 'Remaining'],
-    datasets: [
-      {
-        label,
-        data: [value, maxValue - value],
-        backgroundColor: [color, '#ddd'],
-        hoverBackgroundColor: [color, '#aaa'],
-        borderWidth: 1,
-      },
-    ],
-  });
+  // Find the container matching the ID from params
+  const container = loading
+    ? null
+    : containers.find((c) => c.id?.trim() === containerId?.trim());
 
   return (
     <div
@@ -86,113 +62,21 @@ const ContainerDetails = () => {
 
         {container && (
           <>
-            {/* Container Details */}
             <Row>
               <Col md={6}>
-                <div
-                  style={{
-                    backgroundColor: 'rgba(41, 28, 64, 0.6)',
-                    backdropFilter: 'blur(10px)',
-                    padding: '2rem',
-                    borderRadius: '8px',
-                    marginBottom: '2rem',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 0 20px rgba(123, 89, 255, 0.1)',
-                  }}
-                >
-                  <h3
-                    style={{
-                      color: '#fff',
-                      marginBottom: '1.5rem',
-                      fontSize: '1.5rem',
-                      fontWeight: '400',
-                    }}
-                  >
-                    Container Information
-                  </h3>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                    <div className='info-row'>
-                      <strong>ID:</strong>
-                      <span>{container.id}</span>
-                    </div>
-                    <div className='info-row'>
-                      <strong>Status:</strong>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                        }}
-                      >
-                        <div style={statusIndicatorStyle(container.status)} />
-                        <span>{container.status}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <DockerStats container={container} />
               </Col>
-
-              {/* Charts Section */}
               <Col md={6}>
-                <Row>
-                  <Col md={4}>
-                    <h5 style={{ color: '#fff', marginBottom: '1rem' }}>
-                      Network I/O
-                    </h5>
-                    <Doughnut
-                      data={prepareChartData(
-                        'Network I/O (MB)',
-                        parseFloat(container.networkIO) || 0, // Example value
-                        1000, // Max value assumption
-                        '#ff6384'
-                      )}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: true,
-                      }}
-                      width={60}
-                      height={60} // Small chart size
-                    />
-                  </Col>
-                  <Col md={4}>
-                    <h5 style={{ color: '#fff', marginBottom: '1rem' }}>
-                      Memory Usage
-                    </h5>
-                    <Doughnut
-                      data={prepareChartData(
-                        'Memory Usage (MB)',
-                        parseFloat(container.memoryUsage) || 0, // Example value
-                        16000, // Max value assumption
-                        '#36a2eb'
-                      )}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: true,
-                      }}
-                      width={60}
-                      height={60} // Small chart size
-                    />
-                  </Col>
-                  <Col md={4}>
-                    <h5 style={{ color: '#fff', marginBottom: '1rem' }}>
-                      CPU Usage
-                    </h5>
-                    <Doughnut
-                      data={prepareChartData(
-                        'CPU Usage (%)',
-                        parseFloat(container.cpuUsage) || 0, // Example value
-                        100, // Max value assumption
-                        '#ffce56'
-                      )}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: true,
-                      }}
-                      width={60}
-                      height={60} // Small chart size
-                    />
-                  </Col>
-                </Row>
+                <NetworkIOChart containerId={container.id} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <MemoryUsageChart containerId={container.id} />
+              </Col>
+              <Col md={6}>
+                <CPUUsageChart containerId={container.id} />
               </Col>
             </Row>
           </>
@@ -205,7 +89,7 @@ const ContainerDetails = () => {
             </h3>
             <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
               The container you're looking for might have been stopped or
-              removed
+              removed.
             </p>
           </div>
         )}
