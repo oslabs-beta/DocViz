@@ -1,8 +1,8 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import useDockerData from '../../hooks/useDockerData'; // Import the polling hook
 
-const NetworkIOChart = ({ containerId }) => {
+const CPUUsageChart = ({ containerId }) => {
   const { containers, loading, error } = useDockerData(
     `http://localhost:5003/api/containers/`
   );
@@ -19,30 +19,29 @@ const NetworkIOChart = ({ containerId }) => {
   if (!container) {
     return (
       <p style={{ color: '#fff', textAlign: 'center' }}>
-        No network data available
+        No CPU data available
       </p>
     );
   }
 
-  const data = {
-    labels: [container.id.substring(0, 12)],
+  const chartData = {
+    labels: ['CPU Usage (%)', 'Remaining'],
     datasets: [
       {
-        label: 'Network I/O (MB)',
-        data: [parseFloat(container.networkIO || 0)],
-        fill: false,
-        borderColor: 'rgba(153, 102, 255, 1)',
-        tension: 0.4,
+        label: 'CPU Usage (%)',
+        data: [container.cpuUsage, 100 - container.cpuUsage],
+        backgroundColor: ['#ffce56', '#ddd'],
+        hoverBackgroundColor: ['#ffce56', '#aaa'],
+        borderWidth: 1,
       },
     ],
   };
 
   return (
-    <div style={{ flex: 1 }}>
-      <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Network I/O</h2>
-      <Line data={data} />
+    <div style={{ width: '80%', height: '250px', margin: '0 auto' }}>
+      <Doughnut data={chartData} />
     </div>
   );
 };
 
-export default NetworkIOChart;
+export default CPUUsageChart;
