@@ -1,35 +1,19 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import useDockerData from '../../hooks/useDockerData'; // Import the polling hook
+import useWebSocket from '../../hooks/useWebSocket';
 
 const NetworkIOChart = ({ containerId }) => {
-  const { containers, loading, error } = useDockerData(
-    `http://localhost:5003/api/containers/`
-  );
+  const { data, error } = useWebSocket(`ws://localhost:5003/ws/${containerId}`);
+  const networkIO = data?.networkIO
+    ? parseFloat(data.networkIO.replace(' MB', ''))
+    : 0; // Remove " MB" and convert to number
 
-  if (loading) {
-    return <p style={{ color: '#fff', textAlign: 'center' }}>Loading...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: '#fff', textAlign: 'center' }}>Error: {error}</p>;
-  }
-
-  const container = containers.find((c) => c.id === containerId);
-  if (!container) {
-    return (
-      <p style={{ color: '#fff', textAlign: 'center' }}>
-        No network data available
-      </p>
-    );
-  }
-
-  const data = {
-    labels: [container.id.substring(0, 12)],
+  const chartData = {
+    labels: ['Network I/O'],
     datasets: [
       {
         label: 'Network I/O (MB)',
-        data: [parseFloat(container.networkIO || 0)],
+        data: [networkIO],
         fill: false,
         borderColor: 'rgba(153, 102, 255, 1)',
         tension: 0.4,
@@ -37,10 +21,28 @@ const NetworkIOChart = ({ containerId }) => {
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    scales: {
+      y: {
+        min: 0, // Set minimum value for y-axis
+        max: 100, // Set maximum value for y-axis (adjust based on expected network traffic)
+      },
+    },
+  };
+
   return (
     <div style={{ flex: 1 }}>
       <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Network I/O</h2>
-      <Line data={data} />
+      {error ? (
+        <p style={{ color: 'red' }}>
+          Error fetching network data: {error.message}
+        </p>
+      ) : !data ? (
+        <p>Loading Network IO data...</p>
+      ) : (
+        <Line data={chartData} options={chartOptions} />
+      )}
     </div>
   );
 };

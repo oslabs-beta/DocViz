@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap'; // We are using Card here for the container info card
-import useFetchContainers from '../hooks/useFetchContainers';
+// import useFetchContainers from '../hooks/useFetchContainers';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const DockerStats = ({ container }) => {

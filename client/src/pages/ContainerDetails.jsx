@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Button, Alert, Row, Col } from 'react-bootstrap';
-import useFetchContainers from '../hooks/useFetchContainers'; // Import your hook
 import '../styles/index.css';
 import CPUUsageChart from '../components/charts/CPUUsageChart';
 import MemoryUsageChart from '../components/charts/MemoryUsageChart';
@@ -12,8 +11,42 @@ const ContainerDetails = () => {
   const { containerId } = useParams();
   const navigate = useNavigate();
 
-  // Use your custom hook to fetch container data
-  const { containers, loading, error } = useFetchContainers();
+  const [containers, setContainers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Function to fetch container data
+  const fetchContainers = async () => {
+    try {
+      const response = await fetch('http://localhost:5003/api/containers'); // Adjust endpoint accordingly
+      const data = await response.json();
+
+      // Handle single object or array response
+      if (Array.isArray(data)) {
+        setContainers(data);
+      } else if (typeof data === 'object' && data !== null) {
+        setContainers([data]); // Wrap single object in an array
+      } else {
+        console.error('Unexpected data format:', data);
+        setContainers([]);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError('Error fetching container data');
+      setLoading(false);
+    }
+  };
+
+  // Polling function
+  useEffect(() => {
+    fetchContainers(); // Initial fetch (for initial load, if needed)
+    const interval = setInterval(() => {
+      fetchContainers(); // Re-fetch every 10 seconds (no longer needed with WebSocket)
+    }, 10000); // Adjust the interval to suit your needs
+
+    return () => clearInterval(interval); // Clean up the interval on unmount
+  }, []);
 
   // Find the container matching the ID from params
   const container = loading

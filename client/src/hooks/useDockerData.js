@@ -1,43 +1,34 @@
-import { useState, useEffect } from 'react';
+// import { useEffect, useState } from 'react';
 
-const useDockerData = (apiEndpoint) => {
-  const [containers, setContainers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// const useDockerData = (containerId, endpoint) => {
+//   const [data, setData] = useState(null);
+//   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true); // Reset loading for every fetch
-      try {
-        const response = await fetch(apiEndpoint);
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-        const result = await response.json();
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const url = `/api/${endpoint}/${containerId}`; // Construct the correct API URL
+//         const response = await fetch(url);
 
-        // Debug log
-        console.log('API Response:', result);
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
 
-        // Compare current and new data
-        if (JSON.stringify(containers) !== JSON.stringify(result)) {
-          setContainers(result); // Only update if data is different
-        }
+//         const result = await response.json();
+//         setData(result);
+//       } catch (err) {
+//         console.error(`Error fetching ${endpoint} data:`, err);
+//         setError(err);
+//       }
+//     };
 
-        setError(null); // Clear any previous errors
-      } catch (err) {
-        console.error('Error fetching Docker data:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+//     fetchData(); // Fetch immediately
+//     const interval = setInterval(fetchData, 10000); // Poll every 10 seconds
 
-    fetchData(); // Initial fetch
-    const interval = setInterval(fetchData, 5000); // Poll every 5 seconds
+//     return () => clearInterval(interval); // Cleanup interval
+//   }, [containerId, endpoint]); // Re-run effect if containerId or endpoint changes
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [apiEndpoint, containers]);
+//   return { data, error };
+// };
 
-  return { containers, loading, error }; // Return state as an object
-};
-
-export default useDockerData;
+// export default useDockerData;
