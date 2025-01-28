@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 
 const NetworkIOChart = ({ container }) => {
   const chartRef = useRef(null);
@@ -52,7 +52,7 @@ const NetworkIOChart = ({ container }) => {
   return (
     <div style={{ flex: 1 }}>
       <h5 style={{ color: '#fff', marginBottom: '1rem' }}>Network I/O</h5>
-      <Line ref={chartRef} data={chartData} options={chartOptions} />
+      <Doughnut ref={chartRef} data={chartData} options={chartOptions} />
     </div>
   );
 };

@@ -1,22 +1,8 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import useDockerData from '../../hooks/useDockerData'; // Import the polling hook
 
-const CPUUsageChart = ({ containerId }) => {
-  const { containers, loading, error } = useDockerData(
-    `http://localhost:5003/api/containers/`
-  );
-
-  if (loading) {
-    return <p style={{ color: '#fff', textAlign: 'center' }}>Loading...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: '#fff', textAlign: 'center' }}>Error: {error}</p>;
-  }
-
-  const container = containers.find((c) => c.id === containerId);
-  if (!container) {
+const CPUUsageChart = ({ cpuUsage }) => {
+  if (!cpuUsage) {
     return (
       <p style={{ color: '#fff', textAlign: 'center' }}>
         No CPU data available
@@ -24,12 +10,23 @@ const CPUUsageChart = ({ containerId }) => {
     );
   }
 
+  //helper func
+  const parsePercentage = (cpuUsage) => {
+    const match = cpuUsage.match(/([\d.]+)%/); // Match digits followed by %
+    if (match) {
+      return parseFloat(match[1]); // Extract and parse the numeric part
+    }
+    return 0; // Fallback if parsing fails
+  };
+
+  const percentage = parsePercentage(cpuUsage);
+
   const chartData = {
     labels: ['CPU Usage (%)', 'Remaining'],
     datasets: [
       {
         label: 'CPU Usage (%)',
-        data: [container.cpuUsage, 100 - container.cpuUsage],
+        data: [percentage, 100-percentage],
         backgroundColor: ['#ffce56', '#ddd'],
         hoverBackgroundColor: ['#ffce56', '#aaa'],
         borderWidth: 1,
