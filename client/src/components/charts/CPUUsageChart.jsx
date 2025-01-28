@@ -36,7 +36,7 @@ const CPUUsageChart = ({ containerId }) => {
     maintainAspectRatio: true, // Maintain aspect ratio for responsiveness
     rotation: Math.PI * 1.5, // Start angle
     circumference: Math.PI * 2, // Full circle
-    cutout: '60%', // Inner radius (Doughnut shape)
+    cutout: '0%', // Inner radius (Doughnut shape)
     plugins: {
       tooltip: {
         callbacks: {
@@ -53,7 +53,7 @@ const CPUUsageChart = ({ containerId }) => {
   return (
     <div
       style={{
-        width: '40%', // Reduced size
+        width: '100%', // Reduced size
         height: '200px',
         margin: '0 auto',
       }}
