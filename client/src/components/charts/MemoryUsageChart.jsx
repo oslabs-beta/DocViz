@@ -25,7 +25,7 @@ const MemoryUsageChart = ({ containerId }) => {
       y: {
         beginAtZero: true,
         min: 0, // Set minimum value for y-axis
-        max: 1024, // Set max value for y-axis (adjust based on expected max memory usage)
+        max: 500, // Set max value for y-axis (adjust based on expected max memory usage)
         ticks: {
           stepSize: 128, // Adjust step size as needed
         },

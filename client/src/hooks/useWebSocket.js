@@ -12,13 +12,19 @@ const useWebSocket = (url) => {
     };
 
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setData(message); // Update state with new message
+      try {
+        const message = JSON.parse(event.data);
+        console.log('WebSocket Data Received:', message); // Log the raw data received
+        setData(message); // Update state with new message
+      } catch (err) {
+        console.error('Error parsing WebSocket message:', err);
+        setError(err);
+      }
     };
 
     ws.onerror = (error) => {
+      console.error('WebSocket error:', error); // Log any WebSocket errors
       setError(error);
-      console.error('WebSocket error:', error);
     };
 
     ws.onclose = () => {
@@ -26,6 +32,7 @@ const useWebSocket = (url) => {
     };
 
     return () => {
+      console.log('Cleaning up WebSocket connection');
       ws.close();
     };
   }, [url]);

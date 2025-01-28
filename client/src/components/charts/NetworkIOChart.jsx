@@ -1,22 +1,34 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import useWebSocket from '../../hooks/useWebSocket';
 
 const NetworkIOChart = ({ containerId }) => {
   const { data, error } = useWebSocket(`ws://localhost:5003/ws/${containerId}`);
-  const networkIO = data?.networkIO
-    ? parseFloat(data.networkIO.replace(' MB', ''))
-    : 0; // Remove " MB" and convert to number
+
+  // Helper function to parse RX and TX values
+  const parseNetworkIO = (networkIO) => {
+    if (!networkIO) return { rx: 0, tx: 0 };
+
+    const rxMatch = networkIO.match(/RX:\s*([\d.]+)\s*MB/);
+    const txMatch = networkIO.match(/TX:\s*([\d.]+)\s*MB/);
+
+    return {
+      rx: rxMatch ? parseFloat(rxMatch[1]) : 0,
+      tx: txMatch ? parseFloat(txMatch[1]) : 0,
+    };
+  };
+
+  const { rx, tx } = parseNetworkIO(data?.networkIO);
 
   const chartData = {
-    labels: ['Network I/O'],
+    labels: ['RX (Received)', 'TX (Transmitted)'],
     datasets: [
       {
         label: 'Network I/O (MB)',
-        data: [networkIO],
-        fill: false,
-        borderColor: 'rgba(153, 102, 255, 1)',
-        tension: 0.4,
+        data: [rx, tx],
+        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+        borderWidth: 1,
       },
     ],
   };
@@ -25,8 +37,19 @@ const NetworkIOChart = ({ containerId }) => {
     responsive: true,
     scales: {
       y: {
-        min: 0, // Set minimum value for y-axis
-        max: 100, // Set maximum value for y-axis (adjust based on expected network traffic)
+        beginAtZero: true,
+      },
+    },
+    plugins: {
+      legend: {
+        display: false, // No legend needed for a simple bar chart
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.dataset.label}: ${context.raw.toFixed(2)} MB`;
+          },
+        },
       },
     },
   };
@@ -41,7 +64,7 @@ const NetworkIOChart = ({ containerId }) => {
       ) : !data ? (
         <p>Loading Network IO data...</p>
       ) : (
-        <Line data={chartData} options={chartOptions} />
+        <Bar data={chartData} options={chartOptions} />
       )}
     </div>
   );

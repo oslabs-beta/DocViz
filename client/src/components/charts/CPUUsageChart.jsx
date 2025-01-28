@@ -4,7 +4,19 @@ import useWebSocket from '../../hooks/useWebSocket';
 
 const CPUUsageChart = ({ containerId }) => {
   const { data, error } = useWebSocket(`ws://localhost:5003/ws/${containerId}`);
-  const cpuUsage = data?.cpuUsage || 0;
+
+  // Parse and validate CPU usage
+  const parseCPUUsage = (cpuUsage) => {
+    if (!cpuUsage) return 0;
+    // Remove non-numeric characters (e.g., "%") and parse as a float
+    const parsedValue = parseFloat(cpuUsage.replace('%', ''));
+    // Ensure the value is between 0 and 100
+    return isNaN(parsedValue) || parsedValue < 0 || parsedValue > 100
+      ? 0
+      : parsedValue;
+  };
+
+  const cpuUsage = parseCPUUsage(data?.cpuUsage);
 
   const chartData = {
     labels: ['CPU Usage (%)', 'Remaining'],
