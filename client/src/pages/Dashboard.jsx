@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Button, Alert, Row, Col } from 'react-bootstrap';
-import useFetchContainers from '../hooks/useFetchContainers'; // Import your hook
 import '../styles/index.css';
 import CPUUsageChart from '../components/charts/CPUUsageChart';
 import MemoryUsageChart from '../components/charts/MemoryUsageChart';
@@ -9,12 +8,9 @@ import NetworkIOChart from '../components/charts/NetworkIOChart';
 import DockerStats from '../components/DockerStats'; // Import DockerStats to use its card structure
 import Navbar from '../components/layout/Navbar';
 
-const Dashboard = () => {
+const Dashboard = ({ containers, loading, error }) => {
   const { containerId } = useParams();
   const navigate = useNavigate();
-
-  // Use your custom hook to fetch container data
-  const { containers, loading, error } = useFetchContainers();
 
   // Find the container matching the ID from params
   const container = loading

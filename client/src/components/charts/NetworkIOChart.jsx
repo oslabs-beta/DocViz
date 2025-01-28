@@ -1,46 +1,58 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import useDockerData from '../../hooks/useDockerData'; // Import the polling hook
 
-const NetworkIOChart = ({ containerId }) => {
-  const { containers, loading, error } = useDockerData(
-    `http://localhost:5003/api/containers/`
-  );
+const NetworkIOChart = ({ container }) => {
+  const chartRef = useRef(null);
 
-  if (loading) {
-    return <p style={{ color: '#fff', textAlign: 'center' }}>Loading...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: '#fff', textAlign: 'center' }}>Error: {error}</p>;
-  }
-
-  const container = containers.find((c) => c.id === containerId);
-  if (!container) {
+  // Validate the container prop
+  if (!container || !container.networkIO) {
     return (
-      <p style={{ color: '#fff', textAlign: 'center' }}>
-        No network data available
-      </p>
+      <div style={{ flex: 1 }}>
+        <h5 style={{ color: '#fff', marginBottom: '1rem' }}>Network I/O</h5>
+        <p style={{ color: '#fff', textAlign: 'center' }}>No data available</p>
+      </div>
     );
   }
 
-  const data = {
-    labels: [container.id.substring(0, 12)],
+  // Update chart data dynamically without re-rendering the chart
+  useEffect(() => {
+    if (chartRef.current) {
+      const chartInstance = chartRef.current.chartInstance;
+
+      // Update chart data
+      chartInstance.data.datasets[0].data = [parseFloat(container.networkIO || 0)];
+      chartInstance.update(); // Trigger the chart update
+    }
+  }, [container.networkIO]); // Only update when networkIO changes
+
+  const chartData = {
+    labels: ['Network I/O'], // Static labels
     datasets: [
       {
         label: 'Network I/O (MB)',
-        data: [parseFloat(container.networkIO || 0)],
-        fill: false,
-        borderColor: 'rgba(153, 102, 255, 1)',
+        data: [parseFloat(container.networkIO || 0)], // Initial data
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
         tension: 0.4,
       },
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+    },
+  };
+
   return (
     <div style={{ flex: 1 }}>
-      <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Network I/O</h2>
-      <Line data={data} />
+      <h5 style={{ color: '#fff', marginBottom: '1rem' }}>Network I/O</h5>
+      <Line ref={chartRef} data={chartData} options={chartOptions} />
     </div>
   );
 };

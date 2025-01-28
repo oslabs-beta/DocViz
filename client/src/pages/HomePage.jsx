@@ -6,10 +6,9 @@ import Navbar from '../components/layout/Navbar';
 import Alert from 'react-bootstrap/Alert'; // For Bootstrap
 import '../styles/index.css';
 
-const LandingPage = () => {
-  const { containers, loading, error } = useFetchContainers();
+const HomePage = ( { containers, loading, error } ) => {
   const navigate = useNavigate();
-
+  console.log(`container: ${containers.id}`)
   const handleContainerClick = (containerId) => {
     navigate(`/container/${containerId}`);
   };
@@ -106,4 +105,4 @@ const LandingPage = () => {
 };
 
 
-export default LandingPage;
+export default HomePage;

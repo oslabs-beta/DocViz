@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-const apiEndpoint = 'http://localhost:5003/api/containers';
 const useDockerData = (apiEndpoint) => {
   const [containers, setContainers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,7 +6,7 @@ const useDockerData = (apiEndpoint) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Reset loading for every fetch
+      //  setLoading(true); // Reset loading for every fetch
       try {
         const response = await fetch(apiEndpoint);
         if (!response.ok)
@@ -19,6 +18,7 @@ const useDockerData = (apiEndpoint) => {
 
         // Compare current and new data
         if (JSON.stringify(containers) !== JSON.stringify(result)) {
+          setLoading(false)
           setContainers(result); // Only update if data is different
         }
 
@@ -32,7 +32,7 @@ const useDockerData = (apiEndpoint) => {
     };
 
     fetchData(); // Initial fetch
-    const interval = setInterval(fetchData, 1000); // Poll every 5 seconds
+    const interval = setInterval(fetchData, 100000); // Poll every 5 seconds
 
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, [apiEndpoint, containers]);
