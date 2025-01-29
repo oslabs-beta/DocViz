@@ -6,6 +6,7 @@ import CPUUsageChart from '../components/charts/CPUUsageChart';
 import MemoryUsageChart from '../components/charts/MemoryUsageChart';
 import NetworkIOChart from '../components/charts/NetworkIOChart';
 import DockerStats from '../components/DockerStats'; // Import DockerStats to use its card structure
+import Navbar from '../components/layout/Navbar';
 
 const ContainerDetails = () => {
   const { containerId } = useParams();
@@ -56,19 +57,22 @@ const ContainerDetails = () => {
   return (
     <div
       style={{
-        background: 'linear-gradient(to bottom, #0a0118 0%, #1a0b2e 100%)',
+        background: '#1c183d',
         minHeight: '100vh',
         color: '#fff',
         padding: '2rem',
       }}
     >
+      <Navbar/>
       <Container>
         <div className='d-flex justify-content-between align-items-center mb-4'>
+        <h1 className="pr-1">Docker Dashboard</h1>
           <Button
             variant='outline-light'
             onClick={() => navigate('/')}
             style={{
               borderColor: 'rgba(123, 89, 255, 0.5)',
+              backgroundColor:'#352F6D',
               color: '#fff',
               padding: '0.5rem 1.5rem',
               transition: 'all 0.3s ease',

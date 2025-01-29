@@ -19,13 +19,11 @@ const DockerStats = ({ container }) => {
   });
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Docker Dashboard</h1>
-
+    <div style={{ padding: '10px' }}>
       {/* Container Info Card */}
       <Card
         style={{
-          backgroundColor: 'rgba(41, 28, 64, 0.6)',
+          backgroundColor: '#2f2a5c',
           backdropFilter: 'blur(10px)',
           padding: '2rem',
           borderRadius: '8px',
@@ -47,12 +45,12 @@ const DockerStats = ({ container }) => {
           </h3>
           <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <div className='info-row'>
-              <strong>ID:</strong>
+              <p style={{ fontWeight: 'bold' }}>ID:</p>
               <span
                 style={{
                   wordBreak: 'break-word', // Ensures long ID info wraps instead of overflowing
                   whiteSpace: 'normal', // Allows text to wrap naturally
-                  display: 'inline-block', // Keeps the text inline but allows wrapping
+                  // display: 'inline-block', // Keeps the text inline but allows wrapping
                 }}
               >
                 {container.id}

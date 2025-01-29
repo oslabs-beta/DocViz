@@ -1,5 +1,5 @@
 import React from 'react';
-import { Doughnut } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import useWebSocket from '../../hooks/useWebSocket';
 
 const CPUUsageChart = ({ containerId }) => {
@@ -22,30 +22,60 @@ const CPUUsageChart = ({ containerId }) => {
     labels: ['Remaining', 'CPU Usage (%)'], // Update labels
     datasets: [
       {
-        label: 'CPU Usage Chart',
+        label: 'CPU Usage (%)',
         data: [remaining, adjustedCPUUsage], // Remaining first, then usage
-        backgroundColor: ['#ffce56', '#ddd'], // Yellow for remaining, gray for usage
-        hoverBackgroundColor: ['#ffce56', '#aaa'], // Adjust hover colors
-        borderWidth: 1,
+        backgroundColor: ['#3a3a3a', '#ffcc80'], // Light gray for remaining, bright orange for usage
+        borderColor: ['#4a4a4a', '#ffa726'], // Slightly darker borders for better definition
+        borderWidth: 1.5,
       },
     ],
   };
 
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: true, // Maintain aspect ratio for responsiveness
-    rotation: Math.PI * 1.5, // Start angle
-    circumference: Math.PI * 2, // Full circle
-    cutout: '0%', // Inner radius (Doughnut shape)
+    maintainAspectRatio: false, // Allow chart height to adjust independently
+    scales: {
+      x: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)', // Light gray grid lines
+          drawBorder: false, // Remove axis border
+        },
+        ticks: {
+          color: '#ccc', // Light tick labels
+        },
+      },
+      y: {
+        beginAtZero: true,
+        max: 100, // Ensure the y-axis doesn't go beyond 100%
+        ticks: {
+          stepSize: 20,
+          color: '#ccc', // Light tick labels
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)', // Light gray grid lines
+        },
+      },
+    },
     plugins: {
+      legend: {
+        display: false, // Hide legend for simplicity
+      },
       tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark tooltip background
+        titleColor: '#fff', // Tooltip title color
+        bodyColor: '#fff', // Tooltip text color
         callbacks: {
           label: function (context) {
-            const label = context.label || '';
             const value = context.raw || 0;
-            return `${label}: ${value.toFixed(2)}%`;
+            return `${context.label}: ${value.toFixed(2)}%`;
           },
         },
+      },
+    },
+    layout: {
+      padding: {
+        top: 10, // Add some padding above the chart
+        bottom: 10, // Add padding below the chart
       },
     },
   };
@@ -53,15 +83,20 @@ const CPUUsageChart = ({ containerId }) => {
   return (
     <div
       style={{
-        width: '100%', // Reduced size
-        height: '200px',
+        width: '100%',
+        height: '250px',
         margin: '0 auto',
+        background: 'rgba(255, 255, 255, 0.05)', // Subtle background for contrast
+        borderRadius: '8px',
+        padding: '1rem',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)', // Add a soft shadow
       }}
     >
+      <h2 style={{ color: '#fff', marginBottom: '1rem', textAlign: 'center' }}>CPU Usage</h2>
       {error ? (
         <p style={{ color: 'red' }}>Error fetching CPU data: {error.message}</p>
       ) : (
-        <Doughnut data={chartData} options={chartOptions} />
+        <Bar data={chartData} options={chartOptions} height={150} /> // Reduced height for the chart
       )}
     </div>
   );
