@@ -8,7 +8,7 @@ import '../styles/index.css';
 
 const HomePage = ( { containers, loading, error } ) => {
   const navigate = useNavigate();
-  console.log(`container: ${containers.id}`)
+  // console.log(`container: ${containers.id}`)
   const handleContainerClick = (containerId) => {
     navigate(`/container/${containerId}`);
   };

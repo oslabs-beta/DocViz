@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 
 const NetworkIOChart = ({ container }) => {
-  const chartRef = useRef(null);
+  const chartRef = useRef(null)
 
   // Validate the container prop
   if (!container || !container.networkIO) {

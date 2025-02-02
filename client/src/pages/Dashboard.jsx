@@ -69,15 +69,18 @@ const Dashboard = ({ containers, loading, error }) => {
               </Col>
               <Col md={6}>
                 <NetworkIOChart containerId={container.id} />
+                <NetworkIOChart networkIO={container?.networkIO} containerId={container.id} />
               </Col>
             </Row>
 
             <Row>
               <Col md={6}>
                 <MemoryUsageChart containerId={container.id} />
+                <MemoryUsageChart memoryUsage={container?.memoryUsage} containerId={container.id} />
               </Col>
               <Col md={6}>
                 <CPUUsageChart containerId={container.id} />
+                <CPUUsageChart cpuUsage={container?.cpuUsage} containerId={container.id} />
               </Col>
             </Row>
           </>
