@@ -1,40 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Button, Alert } from 'react-bootstrap';
-import useFetchContainers from '../hooks/useFetchContainers';
+import { Container, Button, Alert, Row, Col } from 'react-bootstrap';
 import '../styles/index.css';
+import CPUUsageChart from '../components/charts/CPUUsageChart';
+import MemoryUsageChart from '../components/charts/MemoryUsageChart';
+import NetworkIOChart from '../components/charts/NetworkIOChart';
+import DockerStats from '../components/DockerStats'; // Import DockerStats to use its card structure
+import Navbar from '../components/layout/Navbar';
 
 const ContainerDetails = () => {
   const { containerId } = useParams();
   const navigate = useNavigate();
-  // useFetchContainers is managing these 3 states
-  const { containers, loading, error } = useFetchContainers();
 
-  const container = containers.find((c) => c.id === containerId);
+  const [containers, setContainers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Function to get status color (orange by default)
-  const getStatusColor = (status) => {
-    if (status?.includes('Up')) return '#00ff9d';
-    if (status?.includes('Exited')) return '#ff4757';
-    return '#ffa502';
+  // Function to fetch container data
+  const fetchContainers = async () => {
+    try {
+      const response = await fetch('http://localhost:5003/api/containers'); // Adjust endpoint accordingly
+      const data = await response.json();
+
+      // Handle single object or array response
+      if (Array.isArray(data)) {
+        setContainers(data);
+      } else if (typeof data === 'object' && data !== null) {
+        setContainers([data]); // Wrap single object in an array
+      } else {
+        console.error('Unexpected data format:', data);
+        setContainers([]);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError('Error fetching container data');
+      setLoading(false);
+    }
   };
+
+  // Polling function
+  useEffect(() => {
+    fetchContainers(); // Initial fetch (for initial load, if needed)
+    const interval = setInterval(() => {
+      fetchContainers(); // Re-fetch every 10 seconds (no longer needed with WebSocket)
+    }, 10000); // Adjust the interval to suit your needs
+
+    return () => clearInterval(interval); // Clean up the interval on unmount
+  }, []);
+
+  // Find the container matching the ID from params
+  const container = loading
+    ? null
+    : containers.find((c) => c.id?.trim() === containerId?.trim());
 
   return (
     <div
       style={{
-        background: 'linear-gradient(to bottom, #0a0118 0%, #1a0b2e 100%)',
+        background: '#1c183d',
         minHeight: '100vh',
         color: '#fff',
         padding: '2rem',
       }}
     >
+      <Navbar/>
       <Container>
         <div className='d-flex justify-content-between align-items-center mb-4'>
+        <h1 className="pr-1">Docker Dashboard</h1>
           <Button
             variant='outline-light'
             onClick={() => navigate('/')}
             style={{
               borderColor: 'rgba(123, 89, 255, 0.5)',
+              backgroundColor:'#352F6D',
               color: '#fff',
               padding: '0.5rem 1.5rem',
               transition: 'all 0.3s ease',
@@ -61,81 +99,23 @@ const ContainerDetails = () => {
 
         {container && (
           <>
-            <h1
-              style={{
-                color: '#fff',
-                marginBottom: '2rem',
-                textShadow: '0 0 10px rgba(255,255,255,0.3)',
-                fontSize: '2.5rem',
-                fontWeight: '300',
-              }}
-            >
-              Container: {container.image}
-            </h1>
-            <div
-              style={{
-                backgroundColor: 'rgba(41, 28, 64, 0.6)',
-                backdropFilter: 'blur(10px)',
-                padding: '2rem',
-                borderRadius: '8px',
-                marginBottom: '2rem',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 0 20px rgba(123, 89, 255, 0.1)',
-              }}
-              className='details-card'
-            >
-              <h3
-                style={{
-                  color: '#fff',
-                  marginBottom: '1.5rem',
-                  fontSize: '1.5rem',
-                  fontWeight: '400',
-                }}
-              >
-                Container Information
-              </h3>
-              <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                <div className='info-row'>
-                  <strong>ID:</strong>
-                  <span>{container.id}</span>
-                </div>
-                <div className='info-row'>
-                  <strong>Status:</strong>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        backgroundColor: getStatusColor(container.status),
-                        boxShadow: `0 0 10px ${getStatusColor(
-                          container.status
-                        )}`,
-                      }}
-                    />
-                    <span>{container.status}</span>
-                  </div>
-                </div>
-                <div className='info-row'>
-                  <strong>Memory Usage:</strong>
-                  <span>{container.memoryUsage}</span>
-                </div>
-                <div className='info-row'>
-                  <strong>CPU Usage:</strong>
-                  <span>{container.cpuUsage}</span>
-                </div>
-                <div className='info-row'>
-                  <strong>Network I/O:</strong>
-                  <span>{container.networkIO}</span>
-                </div>
-              </div>
-            </div>
+            <Row>
+              <Col md={6}>
+                <DockerStats container={container} />
+              </Col>
+              <Col md={6}>
+                <NetworkIOChart containerId={container.id} />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md={6}>
+                <MemoryUsageChart containerId={container.id} />
+              </Col>
+              <Col md={6}>
+                <CPUUsageChart containerId={container.id} />
+              </Col>
+            </Row>
           </>
         )}
 
@@ -146,7 +126,7 @@ const ContainerDetails = () => {
             </h3>
             <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
               The container you're looking for might have been stopped or
-              removed
+              removed.
             </p>
           </div>
         )}

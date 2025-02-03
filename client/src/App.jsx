@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/HomePage';
 import ContainerDetails from './pages/ContainerDetails';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/index.css';
 
 const App = () => {
   return (
