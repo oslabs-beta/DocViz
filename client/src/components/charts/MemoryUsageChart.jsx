@@ -3,7 +3,10 @@ import { Bar } from 'react-chartjs-2';
 import useWebSocket from '../../hooks/useWebSocket';
 
 const MemoryUsageChart = ({ containerId }) => {
-  const { data, error } = useWebSocket(`ws://localhost:5003/ws/${containerId}`);
+  // Use environment variable for WebSocket URL
+  const WS_SERVER_URL = process.env.REACT_APP_WS_SERVER_URL || 'ws://localhost:4000';
+  const { data, error } = useWebSocket(`${WS_SERVER_URL}/ws/${containerId}`);
+
   const memoryUsage = parseFloat(data?.memoryUsage || 0);
 
   const chartData = {
@@ -25,33 +28,33 @@ const MemoryUsageChart = ({ containerId }) => {
     scales: {
       y: {
         beginAtZero: true,
-        suggestedMin: 0, // Prevent bars from leaking below the chart
-        suggestedMax: 500, // Adjust max value based on expected memory usage
+        suggestedMin: 0,
+        suggestedMax: 500,
         ticks: {
-          stepSize: 128, // Adjust step size as needed
-          color: '#ccc', // Light gray for ticks
+          stepSize: 128,
+          color: '#ccc',
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)', // Light gray grid lines
+          color: 'rgba(255, 255, 255, 0.1)',
         },
       },
       x: {
         grid: {
-          display: false, // Remove x-axis grid lines for a cleaner look
+          display: false,
         },
         ticks: {
-          color: '#ccc', // Light gray for ticks
+          color: '#ccc',
         },
       },
     },
     plugins: {
       legend: {
-        display: false, // Hide legend for simplicity
+        display: false,
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark tooltip background
-        titleColor: '#fff', // Tooltip title color
-        bodyColor: '#fff', // Tooltip body text color
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
         callbacks: {
           label: function (context) {
             const value = context.raw || 0;
@@ -68,19 +71,17 @@ const MemoryUsageChart = ({ containerId }) => {
         width: '100%',
         height: '250px',
         margin: '0 auto',
-        background: 'rgba(255, 255, 255, 0.05)', // Subtle background for contrast
+        background: 'rgba(255, 255, 255, 0.05)',
         borderRadius: '8px',
         padding: '1rem',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)', // Soft shadow
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
       }}
     >
       <h5 style={{ color: '#fff', marginBottom: '1rem', textAlign: 'center' }}>
         Memory Usage
       </h5>
       {error ? (
-        <p style={{ color: 'red' }}>
-          Error fetching memory data: {error.message}
-        </p>
+        <p style={{ color: 'red' }}>Error fetching memory data: {error.message}</p>
       ) : (
         <Bar data={chartData} options={chartOptions} />
       )}

@@ -1,9 +1,12 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import useWebSocket from '../../hooks/useWebSocket';
 
 const NetworkIOChart = ({ containerId }) => {
-  const { data, error } = useWebSocket(`ws://localhost:5003/ws/${containerId}`);
+  // Use environment variable for WebSocket URL
+  const WS_SERVER_URL = process.env.REACT_APP_WS_SERVER_URL || 'ws://localhost:4000';
+  const { data, error } = useWebSocket(`${WS_SERVER_URL}/ws/${containerId}`);
+
   const [hoveredLabel, setHoveredLabel] = useState(null);
 
   // Helper function to parse RX and TX values
@@ -36,36 +39,32 @@ const NetworkIOChart = ({ containerId }) => {
 
   const chartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Allow better control over chart size
+    maintainAspectRatio: false,
     scales: {
       x: {
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)', // Light grid lines
-          drawBorder: false, // Remove axis border
+          color: 'rgba(255, 255, 255, 0.1)',
+          drawBorder: false,
         },
-        ticks: {
-          color: '#ccc', // Light tick labels
-        },
+        ticks: { color: '#ccc' },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          stepSize: 50, // Adjust step size as needed
-          color: '#ccc', // Light tick labels
+          stepSize: 50,
+          color: '#ccc',
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)', // Light gray grid lines
+          color: 'rgba(255, 255, 255, 0.1)',
         },
       },
     },
     plugins: {
-      legend: {
-        display: false, // Hide legend
-      },
+      legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark tooltip background
-        titleColor: '#fff', // Tooltip title color
-        bodyColor: '#fff', // Tooltip text color
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
         callbacks: {
           label: function (context) {
             const value = context.raw || 0;
@@ -75,10 +74,7 @@ const NetworkIOChart = ({ containerId }) => {
       },
     },
     layout: {
-      padding: {
-        top: 10, // Add padding to prevent overflow
-        bottom: 10,
-      },
+      padding: { top: 10, bottom: 10 },
     },
   };
 
@@ -88,14 +84,16 @@ const NetworkIOChart = ({ containerId }) => {
         width: '100%',
         height: '250px',
         margin: '0 auto',
-        background: 'rgba(255, 255, 255, 0.05)', // Subtle background for contrast
+        background: 'rgba(255, 255, 255, 0.05)',
         borderRadius: '8px',
         padding: '1rem',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)', // Add a soft shadow
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
         position: 'relative',
       }}
     >
-      <h2 style={{ color: '#fff', marginBottom: '1rem', textAlign: 'center' }}>Network I/O</h2>
+      <h2 style={{ color: '#fff', marginBottom: '1rem', textAlign: 'center' }}>
+        Network I/O
+      </h2>
       {hoveredLabel && (
         <div
           style={{
@@ -111,15 +109,13 @@ const NetworkIOChart = ({ containerId }) => {
             zIndex: 1000,
           }}
         >
-          {hoveredLabel === 'RX (Received)'
-            ? `RX: ${rx.toFixed(2)} MB`
-            : `TX: ${tx.toFixed(2)} MB`}
+          {hoveredLabel === 'RX (Received)' ? `RX: ${rx.toFixed(2)} MB` : `TX: ${tx.toFixed(2)} MB`}
         </div>
       )}
       {error ? (
         <p style={{ color: 'red' }}>Error fetching network data: {error.message}</p>
       ) : (
-        <Bar data={chartData} options={chartOptions} height={150} /> // Smaller chart height
+        <Bar data={chartData} options={chartOptions} height={150} />
       )}
     </div>
   );

@@ -1,0 +1,35 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "4000:4000"
+    user: root 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  client:
+    build: ./client
+    ports:
+      - "3000:80"  # Change to "3000:3000" if React runs on port 3000
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_SERVER_URL=http://server:4000
+      - REACT_APP_WS_SERVER_URL=ws://server:4000  # ✅ Added WebSocket URL
+    restart: unless-stopped
+    depends_on:
+      - server
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
