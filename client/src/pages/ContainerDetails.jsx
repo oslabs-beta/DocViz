@@ -5,54 +5,63 @@ import '../styles/index.css';
 import CPUUsageChart from '../components/charts/CPUUsageChart';
 import MemoryUsageChart from '../components/charts/MemoryUsageChart';
 import NetworkIOChart from '../components/charts/NetworkIOChart';
-import DockerStats from '../components/DockerStats'; // Import DockerStats to use its card structure
+import DockerStats from '../components/DockerStats';
 import Navbar from '../components/layout/Navbar';
+import useWebSocket from '../hooks/useWebSocket';
 
 const ContainerDetails = () => {
   const { containerId } = useParams();
   const navigate = useNavigate();
 
-  const [containers, setContainers] = useState([]);
+  // WebSocket data (NOW includes containerId)
+  const { data: socketData } = useWebSocket(
+    `ws://localhost:5003/ws/${containerId}`
+  );
+  const [apiData, setApiData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Function to fetch container data
-  const fetchContainers = async () => {
-    try {
-      const response = await fetch('http://localhost:5003/api/containers'); // Adjust endpoint accordingly
-      const data = await response.json();
-
-      // Handle single object or array response
-      if (Array.isArray(data)) {
-        setContainers(data);
-      } else if (typeof data === 'object' && data !== null) {
-        setContainers([data]); // Wrap single object in an array
-      } else {
-        console.error('Unexpected data format:', data);
-        setContainers([]);
-      }
-
-      setLoading(false);
-    } catch (err) {
-      setError('Error fetching container data');
-      setLoading(false);
-    }
-  };
-
-  // Polling function
   useEffect(() => {
-    fetchContainers(); // Initial fetch (for initial load, if needed)
-    const interval = setInterval(() => {
-      fetchContainers(); // Re-fetch every 10 seconds (no longer needed with WebSocket)
-    }, 10000); // Adjust the interval to suit your needs
+    const fetchContainers = async () => {
+      try {
+        const response = await fetch('http://localhost:5003/api/containers');
+        const data = await response.json();
+        setApiData(Array.isArray(data) ? data : [data]); // Ensure array
+        setLoading(false);
+      } catch (err) {
+        setError('Error fetching container data');
+        setLoading(false);
+      }
+    };
 
-    return () => clearInterval(interval); // Clean up the interval on unmount
+    fetchContainers();
   }, []);
 
-  // Find the container matching the ID from params
-  const container = loading
-    ? null
-    : containers.find((c) => c.id?.trim() === containerId?.trim());
+  if (!containerId) {
+    return (
+      <Alert variant='danger' className='m-4'>
+        Error: Invalid container ID
+      </Alert>
+    );
+  }
+
+  // Use WebSocket data unless it contains an error
+  const containerList = socketData?.error
+    ? apiData
+    : Array.isArray(socketData)
+    ? socketData
+    : socketData
+    ? [socketData] // Ensure single object is wrapped in an array
+    : apiData || [];
+  const container =
+    Array.isArray(containerList) && containerList.length > 0
+      ? containerList.find((c) => c && String(c.id) === String(containerId))
+      : undefined;
+
+  if (!container) {
+    console.warn('No container found for ID:', containerId);
+    return <p>Container not found or data is loading...</p>;
+  }
 
   return (
     <div
@@ -63,16 +72,16 @@ const ContainerDetails = () => {
         padding: '2rem',
       }}
     >
-      <Navbar/>
+      <Navbar />
       <Container>
         <div className='d-flex justify-content-between align-items-center mb-4'>
-        <h1 className="pr-1">Docker Dashboard</h1>
+          <h1 className='pr-1'>Docker Dashboard</h1>
           <Button
             variant='outline-light'
             onClick={() => navigate('/')}
             style={{
               borderColor: 'rgba(123, 89, 255, 0.5)',
-              backgroundColor:'#352F6D',
+              backgroundColor: '#352F6D',
               color: '#fff',
               padding: '0.5rem 1.5rem',
               transition: 'all 0.3s ease',
@@ -97,38 +106,40 @@ const ContainerDetails = () => {
           </Alert>
         )}
 
-        {container && (
+        {container ? (
           <>
             <Row>
               <Col md={6}>
                 <DockerStats container={container} />
               </Col>
               <Col md={6}>
-                <NetworkIOChart containerId={container.id} />
+                <NetworkIOChart data={container.network || {}} />
               </Col>
             </Row>
 
             <Row>
               <Col md={6}>
-                <MemoryUsageChart containerId={container.id} />
+                <MemoryUsageChart
+                  data={container.memory || { memoryUsage: 0 }}
+                />
               </Col>
               <Col md={6}>
-                <CPUUsageChart containerId={container.id} />
+                <CPUUsageChart data={container.cpu || { usage: 0 }} />
               </Col>
             </Row>
           </>
-        )}
-
-        {!loading && !container && (
-          <div className='text-center mt-5'>
-            <h3 style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              Container not found
-            </h3>
-            <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-              The container you're looking for might have been stopped or
-              removed.
-            </p>
-          </div>
+        ) : (
+          !loading && (
+            <div className='text-center mt-5'>
+              <h3 style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                Container not found
+              </h3>
+              <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                The container you're looking for might have been stopped or
+                removed.
+              </p>
+            </div>
+          )
         )}
       </Container>
     </div>

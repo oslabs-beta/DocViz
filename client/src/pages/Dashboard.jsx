@@ -26,7 +26,7 @@ const Dashboard = ({ containers, loading, error }) => {
         padding: '2rem',
       }}
     >
-      <Navbar/>
+      <Navbar />
       <Container>
         <div className='d-flex justify-content-between align-items-center mb-4'>
           <Button
@@ -44,7 +44,7 @@ const Dashboard = ({ containers, loading, error }) => {
             ← Back to Containers
           </Button>
           <div className='flex-grow-1 text-center'>
-          <h1 className='text-center mx-auto'>Dashboard</h1>
+            <h1 className='text-center mx-auto'>Dashboard</h1>
           </div>
         </div>
 
@@ -57,10 +57,11 @@ const Dashboard = ({ containers, loading, error }) => {
         )}
 
         {error && (
-          <Alert variant= 'danger'>
+          <Alert variant='danger'>
             Error loading container details: {error}
           </Alert>
         )}
+
         {container && (
           <>
             <Row>
@@ -68,19 +69,25 @@ const Dashboard = ({ containers, loading, error }) => {
                 <DockerStats container={container} />
               </Col>
               <Col md={6}>
-                <NetworkIOChart containerId={container.id} />
-                <NetworkIOChart networkIO={container?.networkIO} containerId={container.id} />
+                <NetworkIOChart
+                  networkIO={container?.networkIO}
+                  containerId={container.id}
+                />
               </Col>
             </Row>
 
             <Row>
               <Col md={6}>
-                {/* <MemoryUsageChart containerId={container.id} /> */}
-                <MemoryUsageChart memoryUsage={container?.memoryUsage} containerId={container.id} />
+                <MemoryUsageChart
+                  memoryUsage={container?.memoryUsage}
+                  containerId={container.id}
+                />
               </Col>
               <Col md={6}>
-                <CPUUsageChart containerId={container.id} />
-                <CPUUsageChart cpuUsage={container?.cpuUsage} cootainerId={container.id}
+                <CPUUsageChart
+                  cpuUsage={container?.cpuUsage}
+                  containerId={container.id}
+                />
               </Col>
             </Row>
           </>

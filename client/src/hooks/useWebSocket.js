@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const useWebSocket = (url) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!url || url.includes('undefined')) return; // Avoid invalid URLs
+
     const ws = new WebSocket(url);
 
     ws.onopen = () => {
-      console.log('WebSocket connection established');
+      console.log('WebSocket connection established:', url);
     };
 
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        console.log('WebSocket Data Received:', message); // Log the raw data received
-        setData(message); // Update state with new message
+        console.log('WebSocket Data Received:', message);
+        setData(message.error ? null : message); // Ignore errors
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
         setError(err);
@@ -23,12 +25,12 @@ const useWebSocket = (url) => {
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error); // Log any WebSocket errors
+      console.error('WebSocket error:', error);
       setError(error);
     };
 
     ws.onclose = () => {
-      console.log('WebSocket connection closed');
+      console.log('WebSocket connection closed:', url);
     };
 
     return () => {
