@@ -1,72 +1,66 @@
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
-const MemoryUsageChart = ({ data, totalMemory = 1024 }) => {
-  // Default to 1024MB if totalMemory isn't provided
+const MemoryUsageChart = ({ data, totalMemory = 200 }) => {
   const [chartData, setChartData] = useState({
-    labels: ['Memory Usage'], // Single category
+    labels: [],
     datasets: [
       {
         label: 'Used Memory (MB)',
-        data: [0], // Starts empty, updates dynamically
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        data: [],
         borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1.5,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        tension: 0.2,
       },
       {
         label: 'Available Memory (MB)',
-        data: [totalMemory], // Start with total memory
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        data: [],
         borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1.5,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.2,
       },
     ],
   });
 
-  const [lastUpdated, setLastUpdated] = useState('Never');
-
   useEffect(() => {
-    if (!data || !data.memoryUsage) return;
+    if (!data || typeof data.memoryUsage !== 'number') return;
 
-    const usedMemory = parseFloat(data.memoryUsage.replace(/[^\d.]/g, '') || 0);
-    const availableMemory = Math.max(totalMemory - usedMemory, 0); // Ensure it doesn't go negative
+    console.log('Memory Chart Received Data:', data.memoryUsage); // Debugging Log
 
-    setChartData({
-      labels: [`Last Updated: ${new Date().toLocaleTimeString()}`], // Update label to show timestamp
+    const usedMemory = data.memoryUsage || 0;
+    const availableMemory = Math.max(totalMemory - usedMemory, 0);
+
+    setChartData((prevChartData) => ({
+      labels: [...prevChartData.labels, new Date().toLocaleTimeString()].slice(
+        -10
+      ),
       datasets: [
         {
-          ...chartData.datasets[0],
-          data: [usedMemory], // Update Used Memory
+          ...prevChartData.datasets[0],
+          data: [...prevChartData.datasets[0].data, usedMemory].slice(-10),
         },
         {
-          ...chartData.datasets[1],
-          data: [availableMemory], // Update Available Memory
+          ...prevChartData.datasets[1],
+          data: [...prevChartData.datasets[1].data, availableMemory].slice(-10),
         },
       ],
-    });
-
-    setLastUpdated(new Date().toLocaleTimeString());
-  }, [data]);
+    }));
+  }, [data, totalMemory]);
 
   return (
-    <div>
-      <div style={{ position: 'relative', height: '300px' }}>
-        {' '}
-        {/* Set a height that fits the layout */}
-        <Bar
-          data={chartData}
-          options={{
-            maintainAspectRatio: false,
-            responsive: true,
-            scales: {
-              y: { beginAtZero: true },
-            },
-          }}
-        />
-      </div>
-      <p style={{ textAlign: 'center', marginTop: '10px', fontWeight: 'bold' }}>
-        Last Updated: {lastUpdated}
-      </p>
+    <div style={{ position: 'relative', height: '300px' }}>
+      <Line
+        data={chartData}
+        options={{
+          maintainAspectRatio: false,
+          responsive: true,
+          animation: { duration: 500 },
+          scales: {
+            x: { ticks: { color: '#ccc' } },
+            y: { beginAtZero: true, max: totalMemory },
+          },
+        }}
+      />
     </div>
   );
 };

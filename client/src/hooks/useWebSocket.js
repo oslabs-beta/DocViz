@@ -17,7 +17,13 @@ const useWebSocket = (url) => {
       try {
         const message = JSON.parse(event.data);
         console.log('WebSocket Data Received:', message);
-        setData(message.error ? null : message); // Ignore errors
+
+        setData((prevData) => {
+          if (JSON.stringify(prevData) !== JSON.stringify(message)) {
+            return message.error ? null : message;
+          }
+          return prevData; // Prevents unnecessary re-renders
+        });
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
         setError(err);

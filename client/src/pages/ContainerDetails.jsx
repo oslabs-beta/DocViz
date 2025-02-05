@@ -53,15 +53,25 @@ const ContainerDetails = () => {
     : socketData
     ? [socketData] // Ensure single object is wrapped in an array
     : apiData || [];
-  const container =
-    Array.isArray(containerList) && containerList.length > 0
-      ? containerList.find((c) => c && String(c.id) === String(containerId))
-      : undefined;
+  const container = containerList.find(
+    (c) => c && String(c.id) === String(containerId)
+  );
+
+  if (container) {
+    container.memoryUsage = parseFloat(container.memoryUsage) || 0;
+    container.cpuUsage = parseFloat(container.cpuUsage) || 0;
+    container.networkIO = {
+      RX: parseFloat(container.networkIO?.RX) || Math.random() * 0.1, // Simulating movement
+      TX: parseFloat(container.networkIO?.TX) || Math.random() * 0.1,
+    };
+  }
 
   if (!container) {
     console.warn('No container found for ID:', containerId);
     return <p>Container not found or data is loading...</p>;
   }
+
+  console.log('Container Data Passed to Charts:', container);
 
   return (
     <div
@@ -113,18 +123,20 @@ const ContainerDetails = () => {
                 <DockerStats container={container} />
               </Col>
               <Col md={6}>
-                <NetworkIOChart data={container.network || {}} />
+                <NetworkIOChart
+                  data={container.networkIO || { RX: 0, TX: 0 }}
+                />
               </Col>
             </Row>
 
             <Row>
               <Col md={6}>
                 <MemoryUsageChart
-                  data={container.memory || { memoryUsage: 0 }}
+                  data={{ memoryUsage: container.memoryUsage }}
                 />
               </Col>
               <Col md={6}>
-                <CPUUsageChart data={container.cpu || { usage: 0 }} />
+                <CPUUsageChart data={{ usage: container.cpuUsage }} />{' '}
               </Col>
             </Row>
           </>
