@@ -1,6 +1,11 @@
 const express = require('express');
 const path = require('path');
+const session = require("express-session");
+const passport = require("passport");
+const GitHubStrategy = require("passport-github2").Strategy;
+const dotenv = require("dotenv");
 const cors = require('cors');
+const cookieParser = require("cookie-parser");
 const http = require('http');
 const { WebSocketServer } = require('ws');
 const {
@@ -11,6 +16,7 @@ const indexRoutes = require('./routes/index');
 const requestLogger = require('./middlewares/requestLogger');
 const globalErrorHandler = require('./middlewares/errorHandler');
 
+dotenv.config();
 const app = express();
 
 // Create HTTP server for WebSocket support
@@ -53,9 +59,14 @@ wss.on('connection', (ws, req) => {
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(requestLogger);
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(cookieParser());
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true })); // creates a session using secret key - prevents unnecessary session saves
+// Initialize Passport
+app.use(passport.initialize()); // authenticates passport 
+app.use(passport.session()); // uses express sessions to integrate passport
 
 // Routers
 app.use('/api/containers', containerRoutes);

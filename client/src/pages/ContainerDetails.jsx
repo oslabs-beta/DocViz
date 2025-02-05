@@ -68,7 +68,7 @@ const ContainerDetails = () => {
 
   if (!container) {
     console.warn('No container found for ID:', containerId);
-    return <p>Container not found or data is loading...</p>;
+    return <p>Loading</p>;
   }
 
   console.log('Container Data Passed to Charts:', container);
