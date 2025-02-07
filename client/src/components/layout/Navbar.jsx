@@ -24,16 +24,6 @@ const Navbar = () => {
       );
       setStoredNotifications((prev) => [...prev, ...newNotifications]);
     }
-
-    // 🔴 Manually inject test errors after 5 seconds
-    setTimeout(() => {
-      setStoredNotifications((prev) => [
-        ...prev,
-        { id: 'error-001', message: 'Docker container failed to start.' },
-        { id: 'error-002', message: 'High memory usage detected.' },
-        { id: 'error-003', message: 'Network latency spike detected.' },
-      ]);
-    }, 5000);
   }, [notifications]); // Only run when `notifications` change
 
   // 🔔 Toggle notifications panel (but don't clear them)
