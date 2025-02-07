@@ -1,51 +1,40 @@
 import { useState, useEffect } from 'react';
 
 const useWebSocket = (url) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const seenMessages = new Set(); // Track unique messages
 
   useEffect(() => {
-    if (!url || url.includes('undefined')) return; // Avoid invalid URLs
+    const socket = new WebSocket(url);
 
-    const ws = new WebSocket(url);
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
 
-    ws.onopen = () => {
-      console.log('WebSocket connection established:', url);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        console.log('WebSocket Data Received:', message);
-
-        setData((prevData) => {
-          if (JSON.stringify(prevData) !== JSON.stringify(message)) {
-            return message.error ? null : message;
-          }
-          return prevData; // Prevents unnecessary re-renders
-        });
-      } catch (err) {
-        console.error('Error parsing WebSocket message:', err);
-        setError(err);
+      // Only add new messages if they haven't been seen before
+      if (!seenMessages.has(message.message)) {
+        seenMessages.add(message.message);
+        setNotifications((prev) => [...prev, message]);
       }
     };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      setError(error);
+    socket.onopen = () => {
+      console.log('✅ WebSocket Connected');
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket connection closed:', url);
+    socket.onerror = (error) => {
+      console.error('❌ WebSocket Error:', error);
+    };
+
+    socket.onclose = () => {
+      console.log('❌ WebSocket Disconnected');
     };
 
     return () => {
-      console.log('Cleaning up WebSocket connection');
-      ws.close();
+      socket.close();
     };
   }, [url]);
 
-  return { data, error };
+  return { notifications };
 };
 
 export default useWebSocket;

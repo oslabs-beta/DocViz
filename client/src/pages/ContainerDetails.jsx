@@ -13,10 +13,10 @@ const ContainerDetails = () => {
   const { containerId } = useParams();
   const navigate = useNavigate();
 
-  // WebSocket data (NOW includes containerId)
   const { data: socketData } = useWebSocket(
     `ws://localhost:5003/ws/${containerId}`
   );
+
   const [apiData, setApiData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,7 +26,7 @@ const ContainerDetails = () => {
       try {
         const response = await fetch('http://localhost:5003/api/containers');
         const data = await response.json();
-        setApiData(Array.isArray(data) ? data : [data]); // Ensure array
+        setApiData(Array.isArray(data) ? data : [data]);
         setLoading(false);
       } catch (err) {
         setError('Error fetching container data');
@@ -45,14 +45,14 @@ const ContainerDetails = () => {
     );
   }
 
-  // Use WebSocket data unless it contains an error
   const containerList = socketData?.error
     ? apiData
     : Array.isArray(socketData)
     ? socketData
     : socketData
-    ? [socketData] // Ensure single object is wrapped in an array
+    ? [socketData]
     : apiData || [];
+
   const container = containerList.find(
     (c) => c && String(c.id) === String(containerId)
   );
@@ -61,17 +61,10 @@ const ContainerDetails = () => {
     container.memoryUsage = parseFloat(container.memoryUsage) || 0;
     container.cpuUsage = parseFloat(container.cpuUsage) || 0;
     container.networkIO = {
-      RX: parseFloat(container.networkIO?.RX) || Math.random() * 0.1, // Simulating movement
+      RX: parseFloat(container.networkIO?.RX) || Math.random() * 0.1,
       TX: parseFloat(container.networkIO?.TX) || Math.random() * 0.1,
     };
   }
-
-  if (!container) {
-    console.warn('No container found for ID:', containerId);
-    return <p>Container not found or data is loading...</p>;
-  }
-
-  console.log('Container Data Passed to Charts:', container);
 
   return (
     <div
@@ -89,6 +82,7 @@ const ContainerDetails = () => {
           <Button
             variant='outline-light'
             onClick={() => navigate('/')}
+            className='back-button'
             style={{
               borderColor: 'rgba(123, 89, 255, 0.5)',
               backgroundColor: '#352F6D',
@@ -96,7 +90,6 @@ const ContainerDetails = () => {
               padding: '0.5rem 1.5rem',
               transition: 'all 0.3s ease',
             }}
-            className='back-button'
           >
             ← Back to Containers
           </Button>
@@ -136,22 +129,12 @@ const ContainerDetails = () => {
                 />
               </Col>
               <Col md={6}>
-                <CPUUsageChart data={{ usage: container.cpuUsage }} />{' '}
+                <CPUUsageChart data={{ usage: container.cpuUsage }} />
               </Col>
             </Row>
           </>
         ) : (
-          !loading && (
-            <div className='text-center mt-5'>
-              <h3 style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                Container not found
-              </h3>
-              <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                The container you're looking for might have been stopped or
-                removed.
-              </p>
-            </div>
-          )
+          <p>Container not found or data is loading...</p>
         )}
       </Container>
     </div>
