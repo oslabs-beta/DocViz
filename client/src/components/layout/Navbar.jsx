@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { House, Bell } from 'react-bootstrap-icons';
 import Notifications from '../Notifications';
@@ -7,26 +8,46 @@ import '../../styles/index.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
+
+  // Establish a WebSocket connection and receive notifications
   const { notifications } = useWebSocket('ws://localhost:5003/ws');
+
+  // State to manage visibility of the notifications panel
   const [showPopup, setShowPopup] = useState(false);
+
+  // State to store notifications locally
   const [storedNotifications, setStoredNotifications] = useState([]);
+
+  // Reference to track seen notifications to prevent duplicates
   const seenMessages = useRef(new Set());
 
-  // ✅ Add new notifications *only if they haven't been seen before*
+  // Effect: Updates stored notifications when new ones arrive
   useEffect(() => {
+    // Filter out notifications that have already been seen
     const newNotifications = notifications.filter(
       (notif) => !seenMessages.current.has(notif.message)
     );
 
     if (newNotifications.length > 0) {
+      // Mark new notifications as seen
       newNotifications.forEach((notif) =>
         seenMessages.current.add(notif.message)
       );
       setStoredNotifications((prev) => [...prev, ...newNotifications]);
     }
-  }, [notifications]); // Only run when `notifications` change
 
-  // 🔔 Toggle notifications panel (but don't clear them)
+    // Temporary test notifications (Remove this in production)
+    setTimeout(() => {
+      setStoredNotifications((prev) => [
+        ...prev,
+        { id: 'error-001', message: 'Docker container failed to start.' },
+        { id: 'error-002', message: 'High memory usage detected.' },
+        { id: 'error-003', message: 'Network latency spike detected.' },
+      ]);
+    }, 5000);
+  }, [notifications]); // Effect runs whenever notifications change
+
+  // Function to toggle the notification popup visibility
   const togglePopup = () => setShowPopup(!showPopup);
 
   return (
@@ -41,7 +62,7 @@ const Navbar = () => {
     >
       <div className='mb-3 mr-2 text-white fs-3'>D</div>
 
-      {/* 🏠 Home Button */}
+      {/* Home Button - Navigates to the homepage */}
       <button
         onClick={() => navigate('/')}
         className='nav-button d-flex align-items-center justify-content-center border-0 rounded-2 cursor-pointer'
@@ -55,7 +76,7 @@ const Navbar = () => {
         <House size={20} color='#b8b5d1' />
       </button>
 
-      {/* 🔔 Notification Bell Button */}
+      {/* Notification Bell Button - Opens/closes notifications panel */}
       <button
         onClick={togglePopup}
         className='nav-button d-flex align-items-center justify-content-center border-0 rounded-2 cursor-pointer position-relative'
@@ -68,7 +89,7 @@ const Navbar = () => {
       >
         <Bell size={20} color='#b8b5d1' />
 
-        {/* 🔴 Red Dot - Stays Until All Issues Are Resolved */}
+        {/* Red Dot - Indicates unread notifications */}
         {storedNotifications.length > 0 && (
           <span
             style={{
@@ -84,52 +105,56 @@ const Navbar = () => {
         )}
       </button>
 
-      {/* 📌 Notifications Panel - Stays Open Until Manually Closed */}
-      {showPopup && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50px',
-            left: '60px',
-            backgroundColor: '#2D2856',
-            color: '#fff',
-            width: '250px',
-            borderRadius: '5px',
-            padding: '10px',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
-          }}
-        >
-          <h5>Current Issues</h5>
-          {storedNotifications.length === 0 ? (
-            <p>No active issues</p>
-          ) : (
-            storedNotifications.map((notif, index) => (
-              <div
-                key={notif.id || `${notif.message}-${index}`} // ✅ Unique key fallback
-                style={{ padding: '5px 0' }}
-              >
-                {notif.message}
-                <button
-                  onClick={() => navigate(`/dashboard/${notif.id}`)}
-                  style={{
-                    marginLeft: '10px',
-                    backgroundColor: '#ff9800',
-                    border: 'none',
-                    color: '#fff',
-                    padding: '5px 10px',
-                    borderRadius: '3px',
-                    cursor: 'pointer',
-                  }}
+      {/* Notifications Panel (Rendered using createPortal) */}
+      {showPopup &&
+        createPortal(
+          <div
+            className='nav-notifications'
+            style={{
+              position: 'fixed',
+              top: '60px',
+              left: '70px',
+              width: '300px',
+              background: '#352F6D',
+              color: '#fff',
+              padding: '10px',
+              borderRadius: '5px',
+              boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+              zIndex: 9999,
+            }}
+          >
+            <h5>Current Issues</h5>
+            {storedNotifications.length === 0 ? (
+              <p>No active issues</p>
+            ) : (
+              storedNotifications.map((notif, index) => (
+                <div
+                  key={notif.id || `${notif.message}-${index}`} // Unique key fallback
+                  style={{ padding: '5px 0' }}
                 >
-                  View
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+                  {notif.message}
+                  <button
+                    onClick={() => navigate(`/dashboard/${notif.id}`)}
+                    style={{
+                      marginLeft: '10px',
+                      backgroundColor: '#ff9800',
+                      border: 'none',
+                      color: '#fff',
+                      padding: '5px 10px',
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    View
+                  </button>
+                </div>
+              ))
+            )}
+          </div>,
+          document.body // Renders at the top level of the DOM
+        )}
 
-      {/* 🔔 Toast Notifications (Popup Fades After 3 Seconds, But Notifications Stay) */}
+      {/* Toast-style Notifications that disappear after a few seconds */}
       <Notifications notifications={storedNotifications} />
     </nav>
   );

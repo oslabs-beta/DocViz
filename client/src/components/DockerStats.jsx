@@ -1,15 +1,16 @@
 import React from 'react';
-import { Card } from 'react-bootstrap'; // We are using Card here for the container info card
-// import useFetchContainers from '../hooks/useFetchContainers';
+import { Card } from 'react-bootstrap'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const DockerStats = ({ container }) => {
+  // Function to determine the status color based on container status
   const getStatusColor = (status) => {
-    if (status?.includes('Up')) return '#00ff9d';
-    if (status?.includes('Exited')) return '#ff4757';
-    return '#ffa502';
+    if (status?.includes('Up')) return '#00ff9d'; // Green for running containers
+    if (status?.includes('Exited')) return '#ff4757'; // Red for stopped containers
+    return '#ffa502'; // Orange for unknown states
   };
 
+  // Function to generate the status indicator styling dynamically
   const statusIndicatorStyle = (status) => ({
     width: '15px',
     height: '15px',
@@ -20,7 +21,7 @@ const DockerStats = ({ container }) => {
 
   return (
     <div style={{ padding: '10px' }}>
-      {/* Container Info Card */}
+      {/* Display container information inside a styled card */}
       <Card
         style={{
           backgroundColor: '#2f2a5c',
@@ -48,9 +49,8 @@ const DockerStats = ({ container }) => {
               <p style={{ fontWeight: 'bold' }}>ID:</p>
               <span
                 style={{
-                  wordBreak: 'break-word', // Ensures long ID info wraps instead of overflowing
-                  whiteSpace: 'normal', // Allows text to wrap naturally
-                  // display: 'inline-block', // Keeps the text inline but allows wrapping
+                  wordBreak: 'break-word', // Ensures long IDs wrap correctly
+                  whiteSpace: 'normal', // Prevents text overflow
                 }}
               >
                 {container.id}
@@ -65,6 +65,7 @@ const DockerStats = ({ container }) => {
                   gap: '8px',
                 }}
               >
+                {/* Status indicator with dynamic color */}
                 <div style={statusIndicatorStyle(container.status)} />
                 <span>{container.status}</span>
               </div>

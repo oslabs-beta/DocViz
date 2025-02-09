@@ -1,19 +1,29 @@
 import { useState, useEffect } from 'react';
 
+/**
+ * Custom hook to establish a WebSocket connection and listen for real-time updates.
+ * It maintains WebSocket data, handles errors, and provides notifications for key events.
+ * @param {string} url - The WebSocket URL to connect to.
+ */
 const useWebSocket = (url) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
+  /**
+   * Adds a new notification to the state and removes the oldest one after 5 seconds.
+   * @param {string} message - The notification message.
+   */
   const addNotification = (message) => {
     setNotifications((prev) => [...prev, { id: Date.now(), message }]);
 
     setTimeout(() => {
-      setNotifications((prev) => prev.slice(1)); // Auto-remove oldest after 5 sec
+      setNotifications((prev) => prev.slice(1)); // Auto-remove oldest notification after 5 sec
     }, 5000);
   };
 
   useEffect(() => {
+    // Prevent WebSocket connection if the URL is invalid
     if (!url || url.includes('undefined')) return;
 
     const ws = new WebSocket(url);
@@ -25,13 +35,14 @@ const useWebSocket = (url) => {
         const message = JSON.parse(event.data);
         console.log('WebSocket Data:', message);
 
+        // Update state only if the new data is different
         setData((prevData) =>
           JSON.stringify(prevData) !== JSON.stringify(message)
             ? message
             : prevData
         );
 
-        // 🔔 Notification Logic
+        // Trigger notifications based on container status
         if (message.status === 'stopped') {
           addNotification(`Container ${message.name} has stopped.`);
         }

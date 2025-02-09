@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+// For our current example we set the data total to 200, but it will expand with bigger sets
 const MemoryUsageChart = ({ data, totalMemory = 200 }) => {
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: [], // This will be updated on our Dashbaord
     datasets: [
       {
         label: 'Used Memory (MB)',
@@ -23,25 +24,23 @@ const MemoryUsageChart = ({ data, totalMemory = 200 }) => {
   });
 
   useEffect(() => {
-    if (!data || typeof data.memoryUsage !== 'number') return;
+    if (!data) return;
 
-    console.log('Memory Chart Received Data:', data.memoryUsage); // Debugging Log
-
+    // our used memory and available memory, this will return a numerical value
     const usedMemory = data.memoryUsage || 0;
     const availableMemory = Math.max(totalMemory - usedMemory, 0);
 
-    setChartData((prevChartData) => ({
-      labels: [...prevChartData.labels, new Date().toLocaleTimeString()].slice(
-        -10
-      ),
+    // this will update our chart data
+    setChartData((prev) => ({
+      labels: [...prev.labels, new Date().toLocaleTimeString()].slice(-10),
       datasets: [
         {
-          ...prevChartData.datasets[0],
-          data: [...prevChartData.datasets[0].data, usedMemory].slice(-10),
+          ...prev.datasets[0],
+          data: [...prev.datasets[0].data, usedMemory].slice(-10),
         },
         {
-          ...prevChartData.datasets[1],
-          data: [...prevChartData.datasets[1].data, availableMemory].slice(-10),
+          ...prev.datasets[1],
+          data: [...prev.datasets[1].data, availableMemory].slice(-10),
         },
       ],
     }));

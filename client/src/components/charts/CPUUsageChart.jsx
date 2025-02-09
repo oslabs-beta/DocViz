@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+// We leave our labels an empty array, because it will get updated on our Dashboard page with poll data
 const CPUUsageChart = ({ data }) => {
   const [chartData, setChartData] = useState({
     labels: [],
@@ -10,12 +11,13 @@ const CPUUsageChart = ({ data }) => {
   useEffect(() => {
     if (!data) return;
 
-    setChartData((prevData) => ({
-      labels: [...prevData.labels, new Date().toLocaleTimeString()].slice(-10),
+    // This will set the date for each new location, and make sure we keep only the last 10
+    setChartData((prev) => ({
+      labels: [...prev.labels, new Date().toLocaleTimeString()].slice(-10),
       datasets: [
         {
-          ...prevData.datasets[0],
-          data: [...prevData.datasets[0].data, data.usage].slice(-10),
+          ...prev.datasets[0],
+          data: [...prev.datasets[0].data, data.usage].slice(-10),
         },
       ],
     }));

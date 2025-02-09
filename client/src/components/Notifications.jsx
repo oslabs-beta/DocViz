@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 const Notifications = ({ notifications }) => {
-  const navigate = useNavigate();
-  const [visible, setVisible] = useState(true);
+  const [visibleNotifications, setVisibleNotifications] = useState(notifications);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(false); // Hide only the popup
-    }, 3000);
+    if (notifications.length > 0) {
+      setVisibleNotifications(notifications);
 
-    return () => clearTimeout(timer);
+      // Remove notifications after 3 seconds
+      const timer = setTimeout(() => {
+        setVisibleNotifications([]);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
   }, [notifications]);
 
-  if (!visible) return null; // Hide the toast after 3 seconds
-
-  return (
+  return createPortal(
     <div
+      className='notifications-overlay'
       style={{
-        position: 'absolute',
-        top: '50px',
-        left: '60px',
-        backgroundColor: '#2D2856',
-        color: '#fff',
-        width: '250px',
-        borderRadius: '5px',
-        padding: '10px',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
       }}
     >
-      {notifications.length === 0 ? (
-        <p>No new notifications</p>
-      ) : (
-        notifications.map((notif) => (
-          <div
-            key={notif.file || notif.id || Math.random()} // Ensure a unique key
-            onClick={() => notif.file ? navigate(`/dashboard/${notif.file}`) : console.warn("❌ Missing file path")}
-            style={{
-              padding: '5px 0',
-              cursor: 'pointer',
-              borderBottom: '1px solid #555',
-            }}
-          >
-            <strong>{notif.file || "Unknown File"}</strong>: {notif.message || "No description available"}
-          </div>
-        ))
-      )}
-    </div>
+      {visibleNotifications.map((notif) => (
+        <div
+          key={notif.id}
+          className='notification-item'
+          style={{
+            background: '#352F6D',
+            color: '#fff',
+            padding: '10px 15px',
+            borderRadius: '5px',
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+          }}
+        >
+          <strong>{notif.file || 'Unknown File'}</strong>: {notif.message}
+        </div>
+      ))}
+    </div>,
+    document.body
   );
 };
 

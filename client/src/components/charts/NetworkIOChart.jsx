@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+// The empty array will constantly be updated with our polling 
 const NetworkIOChart = ({ data }) => {
   const [chartData, setChartData] = useState({
     labels: [],
@@ -8,14 +9,14 @@ const NetworkIOChart = ({ data }) => {
       {
         label: 'RX (Received) MB',
         data: [],
-        borderColor: '#4CAF50', // Green for RX
+        borderColor: '#4CAF50',
         backgroundColor: 'rgba(76, 175, 80, 0.2)',
         tension: 0.2,
       },
       {
         label: 'TX (Transmitted) MB',
         data: [],
-        borderColor: '#FF9800', // Orange for TX
+        borderColor: '#FF9800',
         backgroundColor: 'rgba(255, 152, 0, 0.2)',
         tension: 0.2,
       },
@@ -23,19 +24,19 @@ const NetworkIOChart = ({ data }) => {
   });
 
   useEffect(() => {
-    if (!data || typeof data.RX !== 'number' || typeof data.TX !== 'number')
-      return;
+    if (!data) return;
 
-    setChartData((prevData) => ({
-      labels: [...prevData.labels, new Date().toLocaleTimeString()].slice(-10),
+    // This will constantly update our charts with the current time of update.
+    setChartData((prev) => ({
+      labels: [...prev.labels, new Date().toLocaleTimeString()].slice(-10),
       datasets: [
         {
-          ...prevData.datasets[0],
-          data: [...prevData.datasets[0].data, data.RX].slice(-10),
+          ...prev.datasets[0],
+          data: [...prev.datasets[0].data, data.RX || 0].slice(-10),
         },
         {
-          ...prevData.datasets[1],
-          data: [...prevData.datasets[1].data, data.TX].slice(-10),
+          ...prev.datasets[1],
+          data: [...prev.datasets[1].data, data.TX || 0].slice(-10),
         },
       ],
     }));
@@ -49,10 +50,7 @@ const NetworkIOChart = ({ data }) => {
           maintainAspectRatio: false,
           responsive: true,
           animation: { duration: 500 },
-          scales: {
-            x: { ticks: { color: '#ccc' } },
-            y: { beginAtZero: true },
-          },
+          scales: { x: { ticks: { color: '#ccc' } }, y: { beginAtZero: true } },
         }}
       />
     </div>
