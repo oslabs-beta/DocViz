@@ -104,9 +104,9 @@ Submit a pull request
 
 Authors
 
-Kaishaer Mahemuti 
-Elie Beaubrun
-Nicole Duchitanga
-Sierra Rivera
+Kaishaer Mahemuti,
+Elie Beaubrun,
+Nicole Duchitanga,
+Sierra Rivera,
 Jose Sanchez
 
