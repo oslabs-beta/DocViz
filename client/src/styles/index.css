@@ -92,3 +92,16 @@
 .container-card:hover::before {
   opacity: 0.4;
 }
+
+/* Nicole will probably wanna change this */
+.notifications-overlay {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 9999; 
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  max-width: 300px;
+}

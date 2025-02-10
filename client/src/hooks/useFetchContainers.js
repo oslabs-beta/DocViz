@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 
+/**
+ * Custom hook to fetch the list of Docker containers from the API.
+ * It manages loading state, error handling, and container data.
+ */
 const useFetchContainers = () => {
   const [containers, setContainers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,8 +13,9 @@ const useFetchContainers = () => {
     const fetchContainers = async () => {
       try {
         const response = await fetch('http://localhost:5003/api/containers');
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
         setContainers(data);
       } catch (err) {

@@ -1,89 +1,65 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import useWebSocket from '../../hooks/useWebSocket';
+import React, { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 
-const MemoryUsageChart = ({ containerId }) => {
-  const { data, error } = useWebSocket(`ws://localhost:5003/ws/${containerId}`);
-  const memoryUsage = parseFloat(data?.memoryUsage || 0);
-
-  const chartData = {
-    labels: [containerId.substring(0, 12)],
+// For our current example we set the data total to 200, but it will expand with bigger sets
+const MemoryUsageChart = ({ data, totalMemory = 200 }) => {
+  const [chartData, setChartData] = useState({
+    labels: [], // This will be updated on our Dashbaord
     datasets: [
       {
-        label: 'Memory Usage (MB)',
-        data: [memoryUsage],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)', // Light blue
-        borderColor: 'rgba(54, 162, 235, 1)', // Blue border
-        borderWidth: 1.5,
+        label: 'Used Memory (MB)',
+        data: [],
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        tension: 0.2,
+      },
+      {
+        label: 'Available Memory (MB)',
+        data: [],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.2,
       },
     ],
-  };
+  });
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-        suggestedMin: 0, // Prevent bars from leaking below the chart
-        suggestedMax: 500, // Adjust max value based on expected memory usage
-        ticks: {
-          stepSize: 128, // Adjust step size as needed
-          color: '#ccc', // Light gray for ticks
+  useEffect(() => {
+    if (!data) return;
+
+    // our used memory and available memory, this will return a numerical value
+    const usedMemory = data.memoryUsage || 0;
+    const availableMemory = Math.max(totalMemory - usedMemory, 0);
+
+    // this will update our chart data
+    setChartData((prev) => ({
+      labels: [...prev.labels, new Date().toLocaleTimeString()].slice(-10),
+      datasets: [
+        {
+          ...prev.datasets[0],
+          data: [...prev.datasets[0].data, usedMemory].slice(-10),
         },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)', // Light gray grid lines
+        {
+          ...prev.datasets[1],
+          data: [...prev.datasets[1].data, availableMemory].slice(-10),
         },
-      },
-      x: {
-        grid: {
-          display: false, // Remove x-axis grid lines for a cleaner look
-        },
-        ticks: {
-          color: '#ccc', // Light gray for ticks
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false, // Hide legend for simplicity
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark tooltip background
-        titleColor: '#fff', // Tooltip title color
-        bodyColor: '#fff', // Tooltip body text color
-        callbacks: {
-          label: function (context) {
-            const value = context.raw || 0;
-            return `${context.label}: ${value.toFixed(2)} MB`;
-          },
-        },
-      },
-    },
-  };
+      ],
+    }));
+  }, [data, totalMemory]);
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '250px',
-        margin: '0 auto',
-        background: 'rgba(255, 255, 255, 0.05)', // Subtle background for contrast
-        borderRadius: '8px',
-        padding: '1rem',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)', // Soft shadow
-      }}
-    >
-      <h5 style={{ color: '#fff', marginBottom: '1rem', textAlign: 'center' }}>
-        Memory Usage
-      </h5>
-      {error ? (
-        <p style={{ color: 'red' }}>
-          Error fetching memory data: {error.message}
-        </p>
-      ) : (
-        <Bar data={chartData} options={chartOptions} />
-      )}
+    <div style={{ position: 'relative', height: '300px' }}>
+      <Line
+        data={chartData}
+        options={{
+          maintainAspectRatio: false,
+          responsive: true,
+          animation: { duration: 500 },
+          scales: {
+            x: { ticks: { color: '#ccc' } },
+            y: { beginAtZero: true, max: totalMemory },
+          },
+        }}
+      />
     </div>
   );
 };
