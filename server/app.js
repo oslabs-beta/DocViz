@@ -55,7 +55,7 @@ wss.on('connection', (ws, req) => {
 app.use(express.json());
 app.use(cors());
 app.use(requestLogger);
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../client')));
 
 // Routers
 app.use('/api/containers', containerRoutes);
