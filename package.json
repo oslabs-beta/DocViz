@@ -2,11 +2,11 @@
     "name": "docker-stats-app",
     "version": "1.0.0",
     "description": "A tool for monitoring Docker container stats",
-    "main": "server/index.js",
+    "main": "server/server.js",
     "scripts": {
         "start:backend": "node server/server.js",
         "start:frontend": "cd client && npm run dev",
-        "start": "node index.js"
+        "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
     },
     "keywords": [
         "docker",
