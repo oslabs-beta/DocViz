@@ -55,17 +55,30 @@ const Navbar = () => {
       style={{
         backgroundColor: '#2D2856',
         borderRight: '1px solid #443c7a',
-        width: '60px',
+        width: '63px',
         height: '100vh',
       }}
-      className='d-flex flex-column align-items-center py-4 position-fixed start-0 top-0'
+      className='d-flex flex-column align-items-center py-2 position-fixed start-0 top-0'
     >
-      <div className='mb-3 mr-2 text-white fs-3'>D</div>
-
+      <span
+        style={{
+          background:
+            'linear-gradient(90deg, #B794F4 0%, #F687B3 50%, #FBD38D 100%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          display: 'inline-block',
+          fontSize: '1.5rem',
+          fontWeight: 700,
+          marginBottom: '0.5rem',
+        }}
+      >
+        DV
+      </span>
       {/* Home Button - Navigates to the homepage */}
       <button
         onClick={() => navigate('/')}
-        className='nav-button d-flex align-items-center justify-content-center border-0 rounded-2 cursor-pointer'
+        className='nav-button d-flex align-items-center justify-content-center border-0 rounded-2 cursor-pointer mb-2'
         style={{
           backgroundColor: '#3d367580',
           width: '40px',
@@ -115,37 +128,37 @@ const Navbar = () => {
               top: '60px',
               left: '70px',
               width: '300px',
-              background: '#352F6D',
+              background: '#3a3a69',
               color: '#fff',
-              padding: '10px',
+              padding: '8px',
               borderRadius: '5px',
               boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
               zIndex: 9999,
             }}
           >
-            <h5>Current Issues</h5>
+            <h5 className='text-center'>Current Issues</h5>
             {storedNotifications.length === 0 ? (
-              <p>No active issues</p>
+              <p className='text-center'>No active issues.</p>
             ) : (
               storedNotifications.map((notif, index) => (
                 <div
                   key={notif.id || `${notif.message}-${index}`} // Unique key fallback
-                  style={{ padding: '5px 0' }}
+                  style={{ padding: '5px', background: '#26264d' }}
+                  className='mb-2 rounded-2 gap-2'
                 >
-                  {notif.message}
                   <button
                     onClick={() => navigate(`/dashboard/${notif.id}`)}
                     style={{
                       marginLeft: '10px',
-                      backgroundColor: '#ff9800',
                       border: 'none',
+                      background: '#26264d',
                       color: '#fff',
-                      padding: '5px 10px',
                       borderRadius: '3px',
                       cursor: 'pointer',
                     }}
+                    className='pb-1 px-1'
                   >
-                    View
+                    {notif.message}
                   </button>
                 </div>
               ))

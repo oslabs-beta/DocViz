@@ -5,7 +5,15 @@ import { Line } from 'react-chartjs-2';
 const CPUUsageChart = ({ data }) => {
   const [chartData, setChartData] = useState({
     labels: [],
-    datasets: [{ label: 'CPU Usage', data: [], borderColor: '#FFA500' }],
+    datasets: [
+      {
+        label: 'CPU Usage',
+        data: [],
+        borderColor: '#4FD1C5',
+        backgroundColor: 'rgba(79, 209, 197, 0.2)',
+        tension: 0.2,
+      },
+    ],
   });
 
   useEffect(() => {
@@ -23,7 +31,36 @@ const CPUUsageChart = ({ data }) => {
     }));
   }, [data]);
 
-  return <Line data={chartData} />;
+  return (
+    <div style={{ position: 'relative', height: '300px' }}>
+      <Line
+        data={chartData}
+        options={{
+          maintainAspectRatio: false,
+          responsive: true,
+          animation: { duration: 500 },
+          scales: {
+            x: {
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#fff',
+              },
+            },
+          },
+        }}
+      />
+    </div>
+  );
 };
 
 export default CPUUsageChart;
