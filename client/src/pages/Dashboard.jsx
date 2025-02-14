@@ -9,6 +9,35 @@ import DockerStats from '../components/DockerStats';
 import Navbar from '../components/layout/Navbar';
 import useWebSocket from '../hooks/useWebSocket';
 
+const SkeletonDashboard = () => (
+  <div className='d-flex flex-wrap gap-4'>
+    <div style={{ flex: '1', minWidth: '400px' }}>
+      <div className='skeleton-card'>
+        <div className='skeleton-title'></div>
+        <div className='skeleton-stats'>
+          <div className='skeleton-stat-row'></div>
+          <div className='skeleton-stat-row'></div>
+          <div className='skeleton-stat-row'></div>
+        </div>
+      </div>
+      <div className='skeleton-card mt-4'>
+        <div className='skeleton-title'></div>
+        <div className='skeleton-chart'></div>
+      </div>
+    </div>
+    <div style={{ flex: '1', minWidth: '400px' }}>
+      <div className='skeleton-card' style={{ marginBottom: '1rem' }}>
+        <div className='skeleton-title'></div>
+        <div className='skeleton-chart'></div>
+      </div>
+      <div className='skeleton-card'>
+        <div className='skeleton-title'></div>
+        <div className='skeleton-chart'></div>
+      </div>
+    </div>
+  </div>
+);
+
 /**
  * Dashboard component displays detailed metrics for a specific container.
  * It retrieves data via WebSockets and API calls, providing visual insights.
@@ -79,65 +108,129 @@ const Dashboard = ({ addNotification }) => {
         background: '#1c183d',
         minHeight: '100vh',
         color: '#fff',
-        padding: '2rem',
+        position: 'relative',
       }}
     >
       <Navbar />
-      <Container>
-        <div className='d-flex justify-content-between align-items-center mb-4'>
-          <h1 className='pr-1'>Docker Dashboard</h1>
-          <Button
-            variant='outline-light'
-            onClick={() => navigate('/')}
-            className='back-button'
-            style={{
-              borderColor: 'rgba(123, 89, 255, 0.5)',
-              backgroundColor: '#352F6D',
-              color: '#fff',
-            }}
-          >
-            ← Back to Containers
-          </Button>
-        </div>
-
-        {loading && (
-          <div className='text-center'>
-            <div className='spinner-border text-light' role='status'></div>
+      <div style={{ marginLeft: '60px' }}>
+        <Container>
+          <div className='d-flex flex-column align-items-center mb-4'>
+            <span
+              style={{
+                background:
+                  'linear-gradient(90deg, #B794F4 0%, #F687B3 50%, #FBD38D 100%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+                display: 'inline-block',
+                fontSize: '48px',
+                fontWeight: 700,
+                marginBottom: '1rem',
+              }}
+            >
+              DocViz
+            </span>
+            <div className='d-flex justify-content-between align-items-center w-100'>
+              <Button
+                variant='outline-light'
+                onClick={() => navigate('/')}
+                className='back-button'
+                style={{
+                  borderColor: 'rgba(123, 89, 255, 0.5)',
+                  backgroundColor: '#352F6D',
+                  color: '#fff',
+                }}
+              >
+                ← Back to Containers
+              </Button>
+            </div>
           </div>
-        )}
-        {error && (
-          <Alert variant='danger'>
-            Error loading container details: {error}
-          </Alert>
-        )}
 
-        {container ? (
-          <>
-            <Row>
-              <Col md={6}>
+          {loading ? (
+            <SkeletonDashboard />
+          ) : error ? (
+            <Alert variant='danger'>
+              Error loading container details: {error}
+            </Alert>
+          ) : container ? (
+            <div className='d-flex flex-wrap gap-4'>
+              <div style={{ flex: '1', minWidth: '400px' }}>
                 <DockerStats container={container} />
-              </Col>
-              <Col md={6}>
-                <NetworkIOChart
-                  data={container.networkIO || { RX: 0, TX: 0 }}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <MemoryUsageChart
-                  data={{ memoryUsage: container.memoryUsage }}
-                />
-              </Col>
-              <Col md={6}>
-                <CPUUsageChart data={{ usage: container.cpuUsage }} />
-              </Col>
-            </Row>
-          </>
-        ) : (
-          <p>Loading Containers...</p>
-        )}
-      </Container>
+                <div
+                  className='mt-4'
+                  style={{
+                    backgroundColor: '#27304D',
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: '1px solid #3a4366',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: '#FBD38D',
+                      marginBottom: '1.5rem',
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Memory Usage
+                  </h3>
+                  <MemoryUsageChart
+                    data={{ memoryUsage: container.memoryUsage }}
+                  />
+                </div>
+              </div>
+              <div style={{ flex: '1', minWidth: '400px' }}>
+                <div
+                  style={{
+                    backgroundColor: '#27304D',
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: '1px solid #3a4366',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: '#63B3ED',
+                      marginBottom: '1.5rem',
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Network I/O
+                  </h3>
+                  <NetworkIOChart
+                    data={container.networkIO || { RX: 0, TX: 0 }}
+                  />
+                </div>
+                <div
+                  style={{
+                    backgroundColor: '#27304D',
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: '1px solid #3a4366',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: '#4FD1C5',
+                      marginBottom: '1.5rem',
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    CPU Usage
+                  </h3>
+                  <CPUUsageChart data={{ usage: container.cpuUsage }} />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <SkeletonDashboard />
+          )}
+        </Container>
+      </div>
     </div>
   );
 };

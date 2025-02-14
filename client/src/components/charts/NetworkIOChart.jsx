@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-// The empty array will constantly be updated with our polling 
+// The empty array will constantly be updated with our polling
 const NetworkIOChart = ({ data }) => {
   const [chartData, setChartData] = useState({
     labels: [],
@@ -9,15 +9,15 @@ const NetworkIOChart = ({ data }) => {
       {
         label: 'RX (Received) MB',
         data: [],
-        borderColor: '#4CAF50',
-        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        borderColor: '#63B3ED',
+        backgroundColor: 'rgba(99, 179, 237, 0.2)',
         tension: 0.2,
       },
       {
         label: 'TX (Transmitted) MB',
         data: [],
-        borderColor: '#FF9800',
-        backgroundColor: 'rgba(255, 152, 0, 0.2)',
+        borderColor: '#4FD1C5',
+        backgroundColor: 'rgba(79, 209, 197, 0.2)',
         tension: 0.2,
       },
     ],
@@ -50,7 +50,24 @@ const NetworkIOChart = ({ data }) => {
           maintainAspectRatio: false,
           responsive: true,
           animation: { duration: 500 },
-          scales: { x: { ticks: { color: '#ccc' } }, y: { beginAtZero: true } },
+          scales: {
+            x: {
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#fff',
+              },
+            },
+          },
         }}
       />
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'react-bootstrap'; 
+import { Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const DockerStats = ({ container }) => {
@@ -26,9 +26,8 @@ const DockerStats = ({ container }) => {
         style={{
           backgroundColor: '#2f2a5c',
           backdropFilter: 'blur(10px)',
-          padding: '2rem',
           borderRadius: '8px',
-          marginBottom: '2rem',
+          padding: '1rem',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           boxShadow: '0 0 20px rgba(123, 89, 255, 0.1)',
         }}
@@ -42,18 +41,21 @@ const DockerStats = ({ container }) => {
               fontWeight: '400',
             }}
           >
-            Container Information
+            Docker Dashboard
           </h3>
           <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            <div className='info-row'>
-              <p style={{ fontWeight: 'bold' }}>ID:</p>
+            <div className='info-row pt-1'>
+              <p style={{ fontWeight: 'bold' }} className='mb-0'>
+                ID:
+              </p>
               <span
                 style={{
-                  wordBreak: 'break-word', // Ensures long IDs wrap correctly
-                  whiteSpace: 'normal', // Prevents text overflow
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
                 }}
+                title={container.id}
               >
-                {container.id}
+                {container.id.substring(0, 30)}...
               </span>
             </div>
             <div className='info-row'>

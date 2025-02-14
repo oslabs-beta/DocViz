@@ -9,15 +9,15 @@ const MemoryUsageChart = ({ data, totalMemory = 200 }) => {
       {
         label: 'Used Memory (MB)',
         data: [],
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: '#FBD38D',
+        backgroundColor: 'rgba(251, 211, 141, 0.2)',
         tension: 0.2,
       },
       {
         label: 'Available Memory (MB)',
         data: [],
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: '#63B3ED',
+        backgroundColor: 'rgba(99, 179, 237, 0.2)',
         tension: 0.2,
       },
     ],
@@ -55,9 +55,24 @@ const MemoryUsageChart = ({ data, totalMemory = 200 }) => {
           responsive: true,
           animation: { duration: 500 },
           scales: {
-            x: { ticks: { color: '#ccc' } },
-            y: { beginAtZero: true, max: totalMemory },
+            x: {
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            y: {
+              beginAtZero: true,
+              max: totalMemory,
+              ticks: { color: '#fff' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
           },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#fff'
+              }
+            }
+          }
         }}
       />
     </div>

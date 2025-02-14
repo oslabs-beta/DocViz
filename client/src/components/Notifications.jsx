@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const Notifications = ({ notifications }) => {
-  const [visibleNotifications, setVisibleNotifications] = useState(notifications);
+  const [visibleNotifications, setVisibleNotifications] =
+    useState(notifications);
 
   useEffect(() => {
     if (notifications.length > 0) {
@@ -22,6 +23,7 @@ const Notifications = ({ notifications }) => {
       className='notifications-overlay'
       style={{
         position: 'fixed',
+        backgroundColor: '#3A3A69',
         top: '20px',
         right: '20px',
         zIndex: 9999,
@@ -35,7 +37,7 @@ const Notifications = ({ notifications }) => {
           key={notif.id}
           className='notification-item'
           style={{
-            background: '#352F6D',
+            background: '#26264d',
             color: '#fff',
             padding: '10px 15px',
             borderRadius: '5px',
